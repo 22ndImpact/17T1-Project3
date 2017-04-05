@@ -8,6 +8,7 @@ public class LevelController : MonoBehaviour
     [SerializeField] private LevelData LevelData;
     [SerializeField] private PrefabList PrefabList;
     private Transform Anchor;
+    
 
     //Level Data Values
     [SerializeField] private float reloadTime;
@@ -18,6 +19,7 @@ public class LevelController : MonoBehaviour
     public float orbsUsed;
     public float reloadTimer;
     public bool reloading;
+    public int DestructibleObjectCount;
 
     #region Mono Behaviour Events
     void Awake()
@@ -46,7 +48,24 @@ public class LevelController : MonoBehaviour
     //Triggered by the orb when it fires
     public void OrbShot()
     {
+        //Start the reload process
         Reload();
+
+        //Increase the Orbs used by 1
+        orbsUsed++;
+    }
+
+    //Triggered when any destructible object is destroyed
+    public void ObjectDestroyed(DestructibleObject _Object)
+    {
+        //Reduce the remaining amount of Destroyable objects by 1
+        DestructibleObjectCount -= 1;
+
+        //If you reach 0, trigger the end of the level
+        if (DestructibleObjectCount == 0)
+        {
+            EndLevel();
+        }
     }
 
     //Resets the timer and sets reloading to True
@@ -99,5 +118,12 @@ public class LevelController : MonoBehaviour
     void FindObjects()
     {
         Anchor = ObjectFinder.Anchor;
+        DestructibleObjectCount = GameObject.FindGameObjectsWithTag("Destructible").Length;
+    }
+
+    //Triggered when the player has destroyed all the objects
+    public void EndLevel()
+    {
+        Debug.Log("End Level");
     }
 }

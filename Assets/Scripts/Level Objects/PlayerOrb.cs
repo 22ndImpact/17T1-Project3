@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerOrb : MonoBehaviour
+public class PlayerOrb : ColouredObject
 {
 
     #region Variables
@@ -15,9 +15,11 @@ public class PlayerOrb : MonoBehaviour
     private Transform Anchor;
 
     //Component References
-    MeshRenderer MR;
     Rigidbody RB;
     SphereCollider SC;
+    TrailRenderer Trail;
+    LineRenderer Tether;
+
 
     //Used to track the state of the orb
     public OrbState orbState;
@@ -30,22 +32,31 @@ public class PlayerOrb : MonoBehaviour
     #endregion
 
     #region Mono Behaviour Events
-    void Awake()
+    protected override void Awake()
     {
+        //Run the parents Awake Function
+        base.Awake();
+
         //Componenet Referencing
-        MR = GetComponent<MeshRenderer>();
         RB = GetComponent<Rigidbody>();
         SC = GetComponent<SphereCollider>();
+        Trail = GetComponent<TrailRenderer>();
+        Tether = GetComponent<LineRenderer>();
     }
     void Update()
     {
+        UpdateInput();       
 
-        UpdateInput();
-
+        //If the player is draggign the object around, update orb position
         if (orbState == OrbState.Charging)
         {
             FollowMouse();
         }
+    }
+
+    void LateUpdate()
+    {
+        UpdateTether();
     }
     #endregion
 
@@ -60,6 +71,8 @@ public class PlayerOrb : MonoBehaviour
         transform.parent = _Level.transform;
         //Updates the initial state of the orb
         UpdateState();
+        //Updates the initial colour at spawn
+        UpdateColour();
     }
 
     //Checks updates states
@@ -87,20 +100,24 @@ public class PlayerOrb : MonoBehaviour
     // Changes the properties of the orb based on its current state (Static, Charging, Active).
     void UpdateState()
     {
-        //Sets properties to false, to be turned on with switch statement
+        //Turns off all elements, so the switch statment can turn on the apprioriate ones
         RB.useGravity = false;
         SC.enabled = false;
+        Tether.enabled = false;
+        Trail.enabled = false;
+        Trail.Clear();
 
-        //Checks state and enables properties 
         switch (orbState)
         {
             case OrbState.Static:
                 break;
             case OrbState.Charging:
+                Tether.enabled = true;
                 break;
             case OrbState.Active:
                 RB.useGravity = true;
                 SC.enabled = true;
+                Trail.enabled = true;
                 break;
         }
     }
@@ -129,5 +146,35 @@ public class PlayerOrb : MonoBehaviour
 
         //Let the game director know youve shot your orb
         GameDirector.LevelManager.CurrentLevel.OrbShot();
+    }
+
+    //Updates the trail and texture colour of the object based on the colour state
+    public override void UpdateColour()
+    {
+        //Does the base object update colour function
+        base.UpdateColour();
+
+        //Then continues with our specific additions
+        switch (objectColour)
+        {
+            case ObjectColour.Neutural:
+                Trail.colorGradient = gra_Neutural;
+                break;
+            case ObjectColour.AltOne:
+                Trail.colorGradient = gra_AltOne;
+                break;
+            case ObjectColour.AltTwo:
+                Trail.colorGradient = gra_AltTwo;
+                break;
+        }
+    }
+
+    //Updates the properties of the tether connecting the anchor and orb
+    void UpdateTether()
+    {
+        //Your Position
+        Tether.SetPosition(0, transform.position);
+        //Anchor Position
+        Tether.SetPosition(1, Anchor.position);
     }
 }
