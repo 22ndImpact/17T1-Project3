@@ -6,9 +6,9 @@ using System.Xml.Serialization;
 using System.IO;
 
 [Serializable]
-public class Scr_DataManager
+public class DataManager
 {
-    public Scr_DataToSave dataToSave = new Scr_DataToSave();
+    public DataToSave dataToSave = new DataToSave();
 
     public void SaveData()
     {
@@ -16,7 +16,7 @@ public class Scr_DataManager
         dataToSave.MYNIT = 73;
 
         //Create the serializer
-        var serializer = new XmlSerializer(typeof(Scr_DataToSave));
+        var serializer = new XmlSerializer(typeof(DataToSave));
         //Create the stream
         var stream = new FileStream(Application.dataPath + "//SaveData.xml", FileMode.Create);
         //Saves the data

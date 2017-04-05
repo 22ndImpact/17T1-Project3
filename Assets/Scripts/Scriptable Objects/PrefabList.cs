@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu]
-public class ScrObj_LevelData : ScriptableObject
+public class PrefabList : ScriptableObject
 {
-    public float LevelID;
+    public GameObject PlayerOrb;
 }

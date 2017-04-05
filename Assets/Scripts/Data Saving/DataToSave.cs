@@ -4,7 +4,7 @@ using UnityEngine;
 using System;
 
 [Serializable]
-public class Scr_DataToSave
+public class DataToSave
 {
     public int MYNIT;
     public float MYFLOAT;

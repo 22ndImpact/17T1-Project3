@@ -51,6 +51,7 @@ public class GD_InputManager
 public class GD_LevelManager
 {
     public int CurrentLevelID;
+    public LevelController CurrentLevel;
 
     public void LoadLevel(int _LevelID)
     {
