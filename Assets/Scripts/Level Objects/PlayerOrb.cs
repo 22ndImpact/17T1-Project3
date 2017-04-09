@@ -10,6 +10,7 @@ public class PlayerOrb : ColouredObject
     //Balance variables
     [SerializeField] private float orbDragLerpSpeed;
     [SerializeField] private float launchForceMultiplier;
+    [SerializeField] private float dragRadius;
 
     //Object References
     private Transform Anchor;
@@ -79,7 +80,7 @@ public class PlayerOrb : ColouredObject
     void UpdateInput()
     {
         //If you click within range of the orb change to chargign state
-        if (InputController.LeftMouseButtonDown && orbState == OrbState.Static && InputController.MouseOnPoint(transform.position, 1))
+        if (InputController.LeftMouseButtonDown && orbState == OrbState.Static && InputController.MouseOnPoint(transform.position, dragRadius))
             ChangeState(OrbState.Charging);
 
         //If you left go of the left mouse button which charging, fire the orb

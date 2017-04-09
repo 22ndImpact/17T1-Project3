@@ -11,7 +11,7 @@ public class Button_LevelCompleteContinue : MonoBehaviour
     public Text text;
 
     void Start()
-    {
+    {   
         if (GameDirector.LevelManager.GetLevelData(GameDirector.LevelManager.CurrentLevelID + 1).Unlocked == false)
         {
             GetComponent<Button>().enabled = false;

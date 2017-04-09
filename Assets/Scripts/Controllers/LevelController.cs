@@ -104,7 +104,9 @@ public class LevelController : MonoBehaviour
     //Copies info from the external level data object
     void InitializeFromLevelData()
     {
-        levelData = GameDirector.LevelManager.GetLevelData(GameDirector.LevelManager.CurrentLevelID);
+        //Debug line that gets the level ID from the scene name itself instead of the level manager. This is so the level can run before the "Levelload" fucntion has been called
+        levelData = GameDirector.LevelManager.GetLevelData(GameDirector.LevelManager.GetLevelIDFromScene(GameDirector.SceneManager.CurrentSceneName));
+        //levelData = GameDirector.LevelManager.GetLevelData(GameDirector.LevelManager.CurrentLevelID);
 
         reloadTime = levelData.ReloadTime;
         passScore = levelData.PassScore;
@@ -143,8 +145,11 @@ public class LevelController : MonoBehaviour
     //Saves the level data to the external save file
     public void SaveLevelData()
     {
+        //Debug line that gets the level ID from the scene name itself instead of the level manager. This is so the level can run before the "Levelload" fucntion has been called
+        levelData = GameDirector.LevelManager.GetLevelData(GameDirector.LevelManager.GetLevelIDFromScene(GameDirector.SceneManager.CurrentSceneName));
+
         //Locating level data object in global list
-        levelData = GameDirector.LevelManager.GetLevelData(GameDirector.LevelManager.CurrentLevelID);
+        //levelData = GameDirector.LevelManager.GetLevelData(GameDirector.LevelManager.CurrentLevelID);
 
         //Update level stats
         levelData.BestScore = bestScore;

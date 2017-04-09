@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEditor.SceneManagement;
+using System;
 
 public static class GameDirector
 {
@@ -81,6 +82,11 @@ public class GD_LevelManager
 
     //List of persistant level data that is used by the level selector and updated by indervidual level controllers
     List<LevelData> LevelDataList = new List<LevelData>();
+
+    public int GetLevelIDFromScene(string _SceneName)
+    {
+        return Int32.Parse(System.Text.RegularExpressions.Regex.Match(_SceneName, @"\d+$").Value);
+    }
 
     //Scans scenes and populates a list of level data based on level scenes
     public void PopulateLevelList()
