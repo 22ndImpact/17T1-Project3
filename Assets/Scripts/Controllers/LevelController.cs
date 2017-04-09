@@ -25,7 +25,7 @@ public class LevelController : MonoBehaviour
     void Awake()
     {
 
-        GameDirector.LevelManager.PopulateLevelList();
+        //GameDirector.LevelManager.PopulateLevelList();
         //GameDirector.LevelManager.SaveLevelData();
 
         //Updates the level manager that this level is the current one

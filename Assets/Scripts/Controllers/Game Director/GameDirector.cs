@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityEditor.SceneManagement;
 using System;
 
 public static class GameDirector
@@ -91,25 +90,19 @@ public class GD_LevelManager
     //Scans scenes and populates a list of level data based on level scenes
     public void PopulateLevelList()
     {
-        if(GameDirector.dataManager.SaveDataFound)
-        {
-            Debug.Log("Loaded from saved data");
-            LoadLevelData();
-        }
-        else
-        {
-            Debug.Log("Loaded from default resource");
-            LevelDataList = Resources.Load<LevelDataCollection>("ScriptableObjects/Level Collection").LevelList;
-            SaveLevelData();
-        }
 
-        Debug.Log(LevelDataList.Count);
+        //TODO remove: Debug code that always loads from the scriptable object, effectily disabling persistant data
+        LevelDataList = Resources.Load<LevelDataCollection>("ScriptableObjects/Level Collection").LevelList;
 
-        foreach (LevelData levelData in LevelDataList)
-        {
-            
-            Debug.Log(levelData.LevelID);
-        }
+        //if (GameDirector.dataManager.SaveDataFound)
+        //{
+        //    LoadLevelData();
+        //}
+        //else
+        //{
+        //    LevelDataList = Resources.Load<LevelDataCollection>("ScriptableObjects/Level Collection").LevelList;
+        //    SaveLevelData();
+        //}
     }
 
     //Returns the level data from the level data list that corrispondes to the level id

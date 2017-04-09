@@ -12,7 +12,7 @@ public class DataManager
     {
         get
         {
-            return File.Exists(Application.dataPath + "//LevelData.xml");
+            return File.Exists(Application.persistentDataPath + "//LevelData.xml");
         }
     }
 
@@ -21,13 +21,13 @@ public class DataManager
         //Create the serializer
         XmlSerializer serializer = new XmlSerializer(typeof(List<LevelData>));
         //Create the stream
-        FileStream stream = new FileStream(Application.dataPath + "//LevelData.xml", FileMode.Create);
+        FileStream stream = new FileStream(Application.persistentDataPath + "//LevelData.xml", FileMode.Create);
         //Saves the data
         serializer.Serialize(stream, _LevelData);
         //Closes the stream
         stream.Close();
 
-        Debug.Log("Saved level data to: " + Application.dataPath);
+        Debug.Log("Saved level data to: " + Application.persistentDataPath);
     }
 
     public List<LevelData> LoadLevelData()
@@ -35,14 +35,12 @@ public class DataManager
         //Create the serializer
         XmlSerializer serializer = new XmlSerializer(typeof(List<LevelData>));
         //Create the stream
-        FileStream stream = new FileStream(Application.dataPath + "//LevelData.xml", FileMode.Open);
+        FileStream stream = new FileStream(Application.persistentDataPath + "//LevelData.xml", FileMode.Open);
         //Loads the data and applies it to the given leveldata
         List<LevelData> LevelData = serializer.Deserialize(stream) as List<LevelData>;
         //Cloase the stream
         stream.Close();
         //Returns the new level data
         return LevelData;
-
-        Debug.Log("loaded stuff");
     }
 }
