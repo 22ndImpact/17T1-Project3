@@ -2,23 +2,33 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEditor.SceneManagement;
 
 public static class GameDirector
 {
     public static GD_SceneManager SceneManager = new GD_SceneManager();
     public static GD_InputManager InputManager = new GD_InputManager();
     public static GD_LevelManager LevelManager = new GD_LevelManager();
+    public static DataManager dataManager = new DataManager();
 }
 
 public class GD_SceneManager
 {
+    public string CurrentSceneName
+    {
+        get
+        {
+            return SceneManager.GetActiveScene().name;
+        }
+    }
+
     public enum SceneList
     {
         Splash,
         MainMenu,
         Trophies,
         LevelSelect,
-        GamePlay
+        LevelComplete
     }
 
     public void ChangeScene(SceneList _Scene)
@@ -26,14 +36,29 @@ public class GD_SceneManager
         SceneManager.LoadScene((int)_Scene, LoadSceneMode.Single);
     }
 
+    public void ChangeScene(string _SceneName)
+    {
+        SceneManager.LoadScene(_SceneName, LoadSceneMode.Single);
+    }
+
     public void LoadScene(string _SceneName)
     {
         SceneManager.LoadScene(_SceneName, LoadSceneMode.Additive);
     }
 
+    public void LoadScene(int _SceneBuildID)
+    {
+        SceneManager.LoadScene(_SceneBuildID, LoadSceneMode.Additive);
+    }
+
     public void UnloadScene(string _SceneName)
     {
         SceneManager.UnloadSceneAsync(_SceneName);
+    }
+
+    public void UnloadScene(int _SceneBuildID)
+    {
+        SceneManager.UnloadSceneAsync(_SceneBuildID);
     }
 }
 
@@ -51,26 +76,67 @@ public class GD_InputManager
 public class GD_LevelManager
 {
     public int CurrentLevelID;
+
     public LevelController CurrentLevel;
+
+    //List of persistant level data that is used by the level selector and updated by indervidual level controllers
+    List<LevelData> LevelDataList = new List<LevelData>();
+
+    //Scans scenes and populates a list of level data based on level scenes
+    public void PopulateLevelList()
+    {
+        if(GameDirector.dataManager.SaveDataFound)
+        {
+            Debug.Log("Loaded from saved data");
+            LoadLevelData();
+        }
+        else
+        {
+            Debug.Log("Loaded from default resource");
+            LevelDataList = Resources.Load<LevelDataCollection>("ScriptableObjects/Level Collection").LevelList;
+            SaveLevelData();
+        }
+
+        Debug.Log(LevelDataList.Count);
+
+        foreach (LevelData levelData in LevelDataList)
+        {
+            
+            Debug.Log(levelData.LevelID);
+        }
+    }
+
+    //Returns the level data from the level data list that corrispondes to the level id
+    public LevelData GetLevelData(int _LevelID)
+    {
+        foreach(LevelData levelData in LevelDataList)
+        {
+            if(levelData.LevelID == "Level_" + _LevelID)
+            {
+                return levelData;
+            }
+        }
+
+        return null;
+    }
 
     public void LoadLevel(int _LevelID)
     {
         //Hard coded prefix that corispondes with scene naming convention
-        GameDirector.SceneManager.LoadScene("Level_" + _LevelID);
+        GameDirector.SceneManager.ChangeScene("Level_" + _LevelID);
 
         //Updates the live tracking of the CurrentLevelID
         CurrentLevelID = _LevelID;
     }
 
-    public void ChangeLevel(int _LevelID)
+    public void SaveLevelData()
     {
-        //Unloads the current level
-        GameDirector.SceneManager.UnloadScene("Level_" + CurrentLevelID);
+        GameDirector.dataManager.SaveLevelData(LevelDataList);
+    }
 
-        //And loads the new one
-        GameDirector.SceneManager.LoadScene("Level_" + _LevelID);
-
-        //Updates the live tracking of the CurrentLevelID
-        CurrentLevelID = _LevelID;
+    public void LoadLevelData()
+    {
+        LevelDataList = GameDirector.dataManager.LoadLevelData();
     }
 }
+

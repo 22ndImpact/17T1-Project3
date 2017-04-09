@@ -174,7 +174,9 @@ public class PlayerOrb : ColouredObject
     {
         //Your Position
         Tether.SetPosition(0, transform.position);
+        //Mid point
+        Tether.SetPosition(1, (transform.position + Anchor.position) * 0.5f);
         //Anchor Position
-        Tether.SetPosition(1, Anchor.position);
+        Tether.SetPosition(2, Anchor.position);
     }
 }

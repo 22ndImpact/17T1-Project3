@@ -8,27 +8,41 @@ using System.IO;
 [Serializable]
 public class DataManager
 {
-    public DataToSave dataToSave = new DataToSave();
-
-    public void SaveData()
+    public bool SaveDataFound
     {
-        dataToSave.MYFLOAT = 99;
-        dataToSave.MYNIT = 73;
-
-        //Create the serializer
-        var serializer = new XmlSerializer(typeof(DataToSave));
-        //Create the stream
-        var stream = new FileStream(Application.dataPath + "//SaveData.xml", FileMode.Create);
-        //Saves the data
-        serializer.Serialize(stream, dataToSave);
-        //Clkeses the stream
-        stream.Close();
-
-        Debug.Log(Application.dataPath);
+        get
+        {
+            return File.Exists(Application.dataPath + "//LevelData.xml");
+        }
     }
 
-    public void LoadData()
+    public void SaveLevelData(List<LevelData> _LevelData)
     {
+        //Create the serializer
+        XmlSerializer serializer = new XmlSerializer(typeof(List<LevelData>));
+        //Create the stream
+        FileStream stream = new FileStream(Application.dataPath + "//LevelData.xml", FileMode.Create);
+        //Saves the data
+        serializer.Serialize(stream, _LevelData);
+        //Closes the stream
+        stream.Close();
 
+        Debug.Log("Saved level data to: " + Application.dataPath);
+    }
+
+    public List<LevelData> LoadLevelData()
+    {
+        //Create the serializer
+        XmlSerializer serializer = new XmlSerializer(typeof(List<LevelData>));
+        //Create the stream
+        FileStream stream = new FileStream(Application.dataPath + "//LevelData.xml", FileMode.Open);
+        //Loads the data and applies it to the given leveldata
+        List<LevelData> LevelData = serializer.Deserialize(stream) as List<LevelData>;
+        //Cloase the stream
+        stream.Close();
+        //Returns the new level data
+        return LevelData;
+
+        Debug.Log("loaded stuff");
     }
 }

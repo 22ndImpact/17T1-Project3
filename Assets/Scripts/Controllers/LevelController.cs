@@ -5,18 +5,18 @@ using UnityEngine;
 public class LevelController : MonoBehaviour
 {
     //Object References
-    [SerializeField] private LevelData LevelData;
+    public LevelData levelData;
     [SerializeField] private PrefabList PrefabList;
     private Transform Anchor;
-    
 
     //Level Data Values
     [SerializeField] private float reloadTime;
     public int passScore;
     public int perfectScore;
+    public int bestScore;
 
     //Tracking Values
-    public float orbsUsed;
+    public int orbsUsed;
     public float reloadTimer;
     public bool reloading;
     public int DestructibleObjectCount;
@@ -24,6 +24,10 @@ public class LevelController : MonoBehaviour
     #region Mono Behaviour Events
     void Awake()
     {
+
+        GameDirector.LevelManager.PopulateLevelList();
+        //GameDirector.LevelManager.SaveLevelData();
+
         //Updates the level manager that this level is the current one
         GameDirector.LevelManager.CurrentLevel = this;
 
@@ -100,9 +104,12 @@ public class LevelController : MonoBehaviour
     //Copies info from the external level data object
     void InitializeFromLevelData()
     {
-        reloadTime = LevelData.ReloadTime;
-        passScore = LevelData.PassScore;
-        perfectScore = LevelData.PerfectScore;
+        levelData = GameDirector.LevelManager.GetLevelData(GameDirector.LevelManager.CurrentLevelID);
+
+        reloadTime = levelData.ReloadTime;
+        passScore = levelData.PassScore;
+        perfectScore = levelData.PerfectScore;
+        bestScore = levelData.BestScore;
     }
 
     //Creats an orb at the anchor
@@ -125,5 +132,45 @@ public class LevelController : MonoBehaviour
     public void EndLevel()
     {
         Debug.Log("End Level");
+
+        UpdateBestScore();
+
+        SaveLevelData();
+
+        GameDirector.SceneManager.ChangeScene(GD_SceneManager.SceneList.LevelComplete);
+    }
+
+    //Saves the level data to the external save file
+    public void SaveLevelData()
+    {
+        //Locating level data object in global list
+        levelData = GameDirector.LevelManager.GetLevelData(GameDirector.LevelManager.CurrentLevelID);
+
+        //Update level stats
+        levelData.BestScore = bestScore;
+
+        //Save to external file
+        GameDirector.LevelManager.SaveLevelData();
+    }
+
+    //Checks current orbs used towards the best score
+    public void UpdateBestScore()
+    {
+        //Updating best score if it is better
+        if (orbsUsed < bestScore)
+        {
+            bestScore = orbsUsed;
+        }
+
+        //Check if the level is completed, and is so unlock the next one
+        if(bestScore <= passScore)
+        {
+            UnlockNextLevel();
+        }
+    }
+
+    public void UnlockNextLevel()
+    {
+        GameDirector.LevelManager.GetLevelData(GameDirector.LevelManager.CurrentLevelID + 1).Unlocked = true;
     }
 }
