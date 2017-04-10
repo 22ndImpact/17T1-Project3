@@ -77,6 +77,8 @@ public class GD_LevelManager
 {
     public int CurrentLevelID;
 
+    public bool LevelListPopulated = false;
+
     public LevelController CurrentLevel;
 
     //List of persistant level data that is used by the level selector and updated by indervidual level controllers
@@ -90,10 +92,15 @@ public class GD_LevelManager
     //Scans scenes and populates a list of level data based on level scenes
     public void PopulateLevelList()
     {
+        if(LevelListPopulated == false)
+        {
+            Debug.Log("Populate list");
+            //TODO remove: Debug code that always loads from the scriptable object, effectily disabling persistant data
+            LevelDataList = Resources.Load<LevelDataCollection>("ScriptableObjects/Level Collection").LevelList;
+            LevelListPopulated = true;
+        }
 
-        //TODO remove: Debug code that always loads from the scriptable object, effectily disabling persistant data
-        LevelDataList = Resources.Load<LevelDataCollection>("ScriptableObjects/Level Collection").LevelList;
-
+        #region Proper load and saving code
         //if (GameDirector.dataManager.SaveDataFound)
         //{
         //    LoadLevelData();
@@ -103,6 +110,7 @@ public class GD_LevelManager
         //    LevelDataList = Resources.Load<LevelDataCollection>("ScriptableObjects/Level Collection").LevelList;
         //    SaveLevelData();
         //}
+        #endregion
     }
 
     //Returns the level data from the level data list that corrispondes to the level id
@@ -123,9 +131,6 @@ public class GD_LevelManager
     {
         //Hard coded prefix that corispondes with scene naming convention
         GameDirector.SceneManager.ChangeScene("Level_" + _LevelID);
-
-        //Updates the live tracking of the CurrentLevelID
-        CurrentLevelID = _LevelID;
     }
 
     public void SaveLevelData()

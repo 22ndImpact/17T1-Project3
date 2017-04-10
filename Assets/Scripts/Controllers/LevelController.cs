@@ -24,12 +24,16 @@ public class LevelController : MonoBehaviour
     #region Mono Behaviour Events
     void Awake()
     {
+        //Sets the current level based on scene name
+        GameDirector.LevelManager.CurrentLevelID = GameDirector.LevelManager.GetLevelIDFromScene(GameDirector.SceneManager.CurrentSceneName);
 
-        //GameDirector.LevelManager.PopulateLevelList();
-        //GameDirector.LevelManager.SaveLevelData();
+        //Attempts to populate the level list
+        GameDirector.LevelManager.PopulateLevelList();
 
         //Updates the level manager that this level is the current one
         GameDirector.LevelManager.CurrentLevel = this;
+
+
 
         //Takes the values form the scriptable object and applies them to the level
         InitializeFromLevelData();
