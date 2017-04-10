@@ -20,9 +20,12 @@ public class OrbCounter : MonoBehaviour
         //Set the completion bar to 0 scale
         CompletionBar.transform.localScale = new Vector3(0,1,1);
 
+        int PassScore = GameDirector.LevelManager.CurrentLevel.passScore;
+        int PerfectScore = GameDirector.LevelManager.CurrentLevel.perfectScore;
+
         //Set the PassBar to the right scale based on pass score
         //Remainder of perfect score: 1 - PerfectScore/PassScore
-        PassBar.transform.localScale = new Vector3(1 - (float)GameDirector.LevelManager.CurrentLevel.perfectScore / (float)GameDirector.LevelManager.CurrentLevel.passScore, 1, 1);
+        PassBar.transform.localScale = new Vector3(1 - (float)PerfectScore / (float)PassScore, 1, 1);
 
         //Create a bunch of notches to break up the bar based on pass score
         for (int i = 0; i < GameDirector.LevelManager.CurrentLevel.passScore + 1; i++)
@@ -31,11 +34,10 @@ public class OrbCounter : MonoBehaviour
             newNotch.GetComponent<RectTransform>().SetParent(Notches, false);
 
             //Adjust spacing based on total number of notches
-            
-            //float XPosition =  PerfectBar.GetComponent<RectTransform>().w (float)GameDirector.LevelManager.CurrentLevel.perfectScore / (float)GameDirector.LevelManager.CurrentLevel.passScore
 
-            newNotch.transform.localPosition = new Vector3(0,0,0);
+            float XPosition = (Notches.rect.width * ((float)i / (float)PassScore)) - Notches.rect.width;
 
+            newNotch.GetComponent<RectTransform>().localPosition = new Vector3(XPosition, 0,0);
 
             NotchList.Add(newNotch);
         }
