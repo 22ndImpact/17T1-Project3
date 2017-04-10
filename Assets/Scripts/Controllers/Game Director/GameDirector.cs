@@ -71,6 +71,14 @@ public class GD_InputManager
             return Input.GetKeyDown(KeyCode.Space);
         }
     }
+
+    public bool LeftClickDown
+    {
+        get
+        {
+            return Input.GetMouseButtonDown(0);
+        }
+    }
 }
 
 public class GD_LevelManager

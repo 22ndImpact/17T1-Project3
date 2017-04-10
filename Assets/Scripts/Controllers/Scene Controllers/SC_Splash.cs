@@ -31,7 +31,7 @@ public class SC_Splash : SceneController
     void UpdateTimer()
     {
         //Check player input to cancel the countdown short
-        if (GameDirector.InputManager.DebugKeyDown)
+        if (GameDirector.InputManager.LeftClickDown)
             WaitTimer = 0;
 
         //Update and check timer to activate LoadMainMenu
