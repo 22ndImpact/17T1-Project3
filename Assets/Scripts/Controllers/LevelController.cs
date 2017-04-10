@@ -174,6 +174,7 @@ public class LevelController : MonoBehaviour
         //Check if the level is completed, and is so unlock the next one
         if(bestScore <= passScore)
         {
+            Debug.Log("unlock next level");
             UnlockNextLevel();
         }
     }

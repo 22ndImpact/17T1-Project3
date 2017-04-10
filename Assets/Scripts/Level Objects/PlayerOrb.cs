@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class PlayerOrb : ColouredObject
 {
@@ -10,7 +11,10 @@ public class PlayerOrb : ColouredObject
     //Balance variables
     [SerializeField] private float orbDragLerpSpeed;
     [SerializeField] private float launchForceMultiplier;
+    //The radius around the orb that can be clicked to begin a drag
     [SerializeField] private float dragRadius;
+    //The maximum distance the orb can travel from the anchor while being dragged
+    [SerializeField] private float dragLimit;
 
     //Object References
     private Transform Anchor;
@@ -79,8 +83,8 @@ public class PlayerOrb : ColouredObject
     //Checks updates states
     void UpdateInput()
     {
-        //If you click within range of the orb change to chargign state
-        if (InputController.LeftMouseButtonDown && orbState == OrbState.Static && InputController.MouseOnPoint(transform.position, dragRadius))
+        //If you click within range of the orb change to chargign state. And not over a button
+        if (InputController.LeftMouseButtonDown && orbState == OrbState.Static && InputController.MouseOnPoint(transform.position, dragRadius) && !EventSystem.current.IsPointerOverGameObject())
             ChangeState(OrbState.Charging);
 
         //If you left go of the left mouse button which charging, fire the orb
@@ -127,10 +131,16 @@ public class PlayerOrb : ColouredObject
     void FollowMouse()
     {
         //Determine the target position of the Orb
-        Vector3 newPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition); newPosition.z = 0;
+        Vector3 targetPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition); targetPosition.z = 0;
+
+        //If too large, change the target position
+        if ((targetPosition - Anchor.position).magnitude > dragLimit)
+        {
+            targetPosition = Anchor.position + ((targetPosition - Anchor.position).normalized * dragLimit);
+        }
 
         //Lerps towards the target position based on orbDragLerpSpeed
-        transform.position = Vector3.Lerp(transform.position, newPosition, orbDragLerpSpeed);
+        transform.position = Vector3.Lerp(transform.position, targetPosition, orbDragLerpSpeed);
     }
 
     // Launches the orb from the anchor 
