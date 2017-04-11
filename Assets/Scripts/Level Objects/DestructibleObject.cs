@@ -4,6 +4,10 @@ using UnityEngine;
 
 public class DestructibleObject : ColouredObject
 {
+    public float FadeTime;
+    bool Fading = false;
+
+
     void OnCollisionEnter(Collision _collision)
     {
         //If it collides with another coloured object
@@ -12,10 +16,48 @@ public class DestructibleObject : ColouredObject
             //If they are the same colour
             if(_collision.gameObject.GetComponent<ColouredObject>().objectColour == objectColour)
             {
-                //Destroy the object and let the game director know
-                GameDirector.LevelManager.CurrentLevel.ObjectDestroyed(this);
-                Destroy(this.gameObject);
+                //Trigger the object fade
+                if (!Fading)
+                {
+                    StartCoroutine(FadeOutDestroy());
+                }
+                //TODO Trigger the object fade to desctuction
+                //TODO when the level ends, slow-mo into fad out
             }
         }
+    }
+
+    IEnumerator FadeOutDestroy()
+    {
+        //Set the object to be destroyed
+        GameDirector.LevelManager.CurrentLevel.ObjectDestroyed(this);
+
+        //Stores the initial alpha of the object to lerp from
+        float startignAlpha = GetComponent<MeshRenderer>().material.color.a;
+        //Start a timer
+        float timeTracker = FadeTime;
+
+        while(timeTracker > 0)
+        {
+            Debug.Log("Fading: " + timeTracker / FadeTime);
+            //Store a temp colour to allow us to modify only the alpha
+            Color tempColor = GetComponent<MeshRenderer>().material.color;
+            //Lerp the alpha of the temp colour in time with the percentage of fade
+            tempColor.a = Mathf.Lerp(0, startignAlpha, timeTracker / FadeTime);
+            //Apply the temp colour back to the real material
+            GetComponent<MeshRenderer>().material.color = tempColor;
+
+            //Increase the completion by delta time
+            timeTracker -= Time.smoothDeltaTime;
+
+            yield return null;
+        }
+
+        Debug.Log("faded");
+
+        Destroy(this.gameObject);
+        //Destroy the object and let the game director know
+
+
     }
 }

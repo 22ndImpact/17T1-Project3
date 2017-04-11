@@ -21,6 +21,9 @@ public class LevelController : MonoBehaviour
     public bool reloading;
     public int DestructibleObjectCount;
 
+    //The time it takes to end the level
+    float EndOfLevelStall = 1f;
+
     #region Mono Behaviour Events
     void Awake()
     {
@@ -72,7 +75,7 @@ public class LevelController : MonoBehaviour
         //If you reach 0, trigger the end of the level
         if (DestructibleObjectCount == 0)
         {
-            EndLevel();
+            StartCoroutine(EndLevel());
         }
     }
 
@@ -135,15 +138,33 @@ public class LevelController : MonoBehaviour
     }
 
     //Triggered when the player has destroyed all the objects
-    public void EndLevel()
+    IEnumerator EndLevel()
     {
         Debug.Log("End Level");
 
+        //Slow Time TODO change hardcoded value
+        Time.timeScale = 0.1f;
+
+        #region Stall while in slow mo
+        //Set a timer
+        float StallTimer = EndOfLevelStall * Time.timeScale;
+
+        //Stall while timer counts down
+        while(StallTimer > 0 )
+        {
+            Debug.Log("Stalling: " + StallTimer);
+            yield return null;
+            StallTimer -= Time.deltaTime;
+        }
+        #endregion
+
+        #region End of level proceadures
+        //Reset the time scale from the slow mo
+        Time.timeScale = 1;
         UpdateBestScore();
-
         SaveLevelData();
-
         GameDirector.SceneManager.ChangeScene(GD_SceneManager.SceneList.LevelComplete);
+        #endregion
     }
 
     //Saves the level data to the external save file
