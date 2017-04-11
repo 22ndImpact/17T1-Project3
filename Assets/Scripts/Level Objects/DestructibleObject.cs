@@ -5,8 +5,21 @@ using UnityEngine;
 public class DestructibleObject : ColouredObject
 {
     public float FadeTime;
+    public float yPositionBoundary;
     bool Fading = false;
 
+    void Update()
+    {
+        //Checks if the block is not lower than a certain cut off point, and if it is, Fade/Destroy it
+        if(gameObject.transform.position.y <= yPositionBoundary)
+        {
+            //Check if your not already dead
+            if (!Fading)
+            {
+                StartCoroutine(FadeOutDestroy());
+            }
+        }
+    }
 
     void OnCollisionEnter(Collision _collision)
     {
@@ -29,6 +42,9 @@ public class DestructibleObject : ColouredObject
 
     IEnumerator FadeOutDestroy()
     {
+        //Set to fading, to stop double death situations
+        Fading = true;
+
         //Set the object to be destroyed
         GameDirector.LevelManager.CurrentLevel.ObjectDestroyed(this);
 
