@@ -8,6 +8,8 @@ public class DestructibleObject : ColouredObject
     public float yPositionBoundary;
     bool Fading = false;
 
+    public AudioClip DeathNoise;
+
     void Update()
     {
         //Checks if the block is not lower than a certain cut off point, and if it is, Fade/Destroy it
@@ -16,7 +18,11 @@ public class DestructibleObject : ColouredObject
             //Check if your not already dead
             if (!Fading)
             {
+                //Destroy the object
                 StartCoroutine(FadeOutDestroy());
+
+                //Set orbs used to lots
+                GameDirector.LevelManager.CurrentLevel.AdjustOrbsUsed(99);
             }
         }
     }
@@ -32,6 +38,7 @@ public class DestructibleObject : ColouredObject
                 //Trigger the object fade
                 if (!Fading)
                 {
+                    //Activte the fade
                     StartCoroutine(FadeOutDestroy());
                 }
                 //TODO Trigger the object fade to desctuction
@@ -42,6 +49,9 @@ public class DestructibleObject : ColouredObject
 
     IEnumerator FadeOutDestroy()
     {
+        //Activate sound
+        GameDirector.LevelManager.CurrentLevel.PlaySound(DeathNoise);
+
         //Set to fading, to stop double death situations
         Fading = true;
 

@@ -8,6 +8,7 @@ public class LevelController : MonoBehaviour
     public LevelData levelData;
     [SerializeField] private PrefabList PrefabList;
     private Transform Anchor;
+    
 
     //Level Data Values
     [SerializeField] private float reloadTime;
@@ -27,6 +28,9 @@ public class LevelController : MonoBehaviour
     #region Mono Behaviour Events
     void Awake()
     {
+        //Resets the time scale back to 1, this is a fail safe incase of restarts during slow mo
+        Time.timeScale = 1;
+
         //Sets the current level based on scene name
         GameDirector.LevelManager.CurrentLevelID = GameDirector.LevelManager.GetLevelIDFromScene(GameDirector.SceneManager.CurrentSceneName);
 
@@ -63,7 +67,12 @@ public class LevelController : MonoBehaviour
         Reload();
 
         //Increase the Orbs used by 1
-        orbsUsed++;
+        AdjustOrbsUsed(1);
+    }
+
+    public void AdjustOrbsUsed(int _OrbsUsed)
+    {
+        orbsUsed += _OrbsUsed;
     }
 
     //Triggered when any destructible object is destroyed
@@ -204,4 +213,13 @@ public class LevelController : MonoBehaviour
     {
         GameDirector.LevelManager.GetLevelData(GameDirector.LevelManager.CurrentLevelID + 1).Unlocked = true;
     }
+
+    public void PlaySound(AudioClip _clip)
+    {
+        GetComponent<AudioSource>().PlayOneShot(_clip);
+    }
+
+
 }
+
+

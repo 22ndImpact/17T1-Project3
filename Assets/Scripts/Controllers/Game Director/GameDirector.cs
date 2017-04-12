@@ -102,7 +102,6 @@ public class GD_LevelManager
     {
         if(LevelListPopulated == false)
         {
-            Debug.Log("Populate list");
             //TODO remove: Debug code that always loads from the scriptable object, effectily disabling persistant data. Need to instante this with an instance or it will overwirte the data in the scriptable object
             LevelDataList = GameObject.Instantiate<LevelDataCollection>(Resources.Load<LevelDataCollection>("ScriptableObjects/Level Collection")).LevelList;
             LevelListPopulated = true;

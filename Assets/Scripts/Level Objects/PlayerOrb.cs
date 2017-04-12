@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -19,12 +20,17 @@ public class PlayerOrb : ColouredObject
     //Object References
     private Transform Anchor;
 
+    //Effects
+    public GameObject Particle_Collision;
+    public AudioClip HitNoise;
+
+
+
     //Component References
     Rigidbody RB;
     SphereCollider SC;
     TrailRenderer Trail;
     LineRenderer Tether;
-
 
     //Used to track the state of the orb
     public OrbState orbState;
@@ -34,6 +40,10 @@ public class PlayerOrb : ColouredObject
         Charging,
         Active
     }
+
+    //Trajectory Predictor
+    public TrajectoryPredictor TrajPred = new TrajectoryPredictor();
+
     #endregion
 
     #region Mono Behaviour Events
@@ -48,6 +58,10 @@ public class PlayerOrb : ColouredObject
         Trail = GetComponent<TrailRenderer>();
         Tether = GetComponent<LineRenderer>();
     }
+    void Start()
+    {
+        TrajPred.LoadTrajectoryPredictor();
+    }
     void Update()
     {
         UpdateInput();       
@@ -55,10 +69,12 @@ public class PlayerOrb : ColouredObject
         //If the player is draggign the object around, update orb position
         if (orbState == OrbState.Charging)
         {
+            //Track the position of the mouse
             FollowMouse();
+            //Update the trajectory nodes
+            TrajPred.UpdateTrajectory(transform.position, DetermineLaunchForce());
         }
     }
-
     void LateUpdate()
     {
         UpdateTether();
@@ -115,14 +131,17 @@ public class PlayerOrb : ColouredObject
         switch (orbState)
         {
             case OrbState.Static:
+                TrajPred.HideTrajectory();
                 break;
             case OrbState.Charging:
                 Tether.enabled = true;
+                TrajPred.ShowTrajectory();
                 break;
             case OrbState.Active:
                 RB.useGravity = true;
                 SC.enabled = true;
                 Trail.enabled = true;
+                TrajPred.DestroyTrajectory();
                 break;
         }
     }
@@ -149,14 +168,17 @@ public class PlayerOrb : ColouredObject
         //Change state to being active
         ChangeState(OrbState.Active);
 
-        //Determine the direction and distance form the anchor
-        Vector3 positionDelta = Anchor.position - transform.position;
-
         //Apply force
-        RB.AddForce(positionDelta * launchForceMultiplier);
+        RB.AddForce(DetermineLaunchForce());
 
         //Let the game director know youve shot your orb
         GameDirector.LevelManager.CurrentLevel.OrbShot();
+    }
+
+    Vector3 DetermineLaunchForce()
+    {
+        //Determine the direction and distance form the anchor
+        return (Anchor.position - transform.position) * launchForceMultiplier;
     }
 
     //Updates the trail and texture colour of the object based on the colour state
@@ -190,4 +212,109 @@ public class PlayerOrb : ColouredObject
         //Anchor Position
         Tether.SetPosition(2, Anchor.position);
     }
+
+    //TODO code review this hack job
+    void OnCollisionEnter(Collision _Collision)
+    {
+        //Create a particle prefab
+        GameObject newParticleEmitter = Instantiate(Particle_Collision);
+
+        //Change the position to the collision point
+        newParticleEmitter.transform.position = _Collision.contacts[0].point;
+
+        //Adjust its colour
+        ParticleSystem.MainModule settings = newParticleEmitter.GetComponent<ParticleSystem>().main;
+        settings.startColor = new ParticleSystem.MinMaxGradient(gameObject.GetComponent<MeshRenderer>().material.color);
+
+        //Adjust its rotation
+        newParticleEmitter.transform.rotation *= Quaternion.FromToRotation(Vector3.up, _Collision.contacts[0].normal);
+
+        //Activate sound
+        GameDirector.LevelManager.CurrentLevel.PlaySound(HitNoise);
+    }
 }
+
+[Serializable]
+public class TrajectoryPredictor
+{
+    public int TrajectoryNodes;
+    public float DistanceBetweenNodes;
+    public float DistanceOfFirstNode;
+
+    public GameObject TrajectoryOrb;
+    List<GameObject> TrajectoryNodeList = new List<GameObject>();
+
+    public float VelocityAdjustment; //0.01985 FOR SOME REASON!!!!
+
+    public void LoadTrajectoryPredictor()
+    {
+        Debug.Log("Create TrajectoryList");
+        //Loads the predictor
+        LoadTrajectoryPredictor(TrajectoryNodes);
+    }
+
+    public void LoadTrajectoryPredictor(int _Steps)
+    {
+        for (int i = 0; i < _Steps; i++)
+        {
+            GameObject newNode = GameObject.Instantiate(TrajectoryOrb);
+            //Turns all of the off to start with
+            newNode.SetActive(false);
+            TrajectoryNodeList.Add(newNode);
+
+        }
+    }
+
+    public void UpdateTrajectory(Vector3 pStartPosition, Vector3 pVelocity)
+    {
+        Vector3 AdjustedVelocity = pVelocity * VelocityAdjustment; 
+
+        float velocity = Mathf.Sqrt((AdjustedVelocity.x * AdjustedVelocity.x) + (AdjustedVelocity.y * AdjustedVelocity.y));
+        float angle = Mathf.Rad2Deg * (Mathf.Atan2(AdjustedVelocity.y, AdjustedVelocity.x));
+
+        float fTime = 0;
+        fTime += DistanceOfFirstNode;
+
+        for (int i = 0; i < TrajectoryNodeList.Count; i++)
+        {
+            float dx = velocity * fTime * Mathf.Cos(angle * Mathf.Deg2Rad);
+            float dy = velocity * fTime * Mathf.Sin(angle * Mathf.Deg2Rad) - (Physics.gravity.magnitude * fTime * fTime / 2.0f);
+
+            Vector3 pos = new Vector3(pStartPosition.x + dx, pStartPosition.y + dy, 0);
+            TrajectoryNodeList[i].transform.position = pos;
+            fTime += DistanceBetweenNodes;
+        }
+    }
+
+    public void ShowTrajectory()
+    {
+        //Loops through each predictor
+        for (int i = 0; i < TrajectoryNodeList.Count; i++)
+        {
+            //Turns on the orbs
+            TrajectoryNodeList[i].SetActive(true);           
+        }
+    }
+
+    public void HideTrajectory()
+    {
+        //Loops through each predictor
+        for (int i = 0; i < TrajectoryNodeList.Count; i++)
+        {
+            //Turns on the orbs
+            TrajectoryNodeList[i].SetActive(false);
+        }
+    }
+
+    public void DestroyTrajectory()
+    {
+        //Loops through each predictor
+        for (int i = 0; i < TrajectoryNodeList.Count; i++)
+        {
+            //Turns on the orbs
+            GameObject.Destroy(TrajectoryNodeList[i]);
+        }
+    }
+}
+
+

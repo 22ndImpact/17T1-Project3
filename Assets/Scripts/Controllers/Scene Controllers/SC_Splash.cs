@@ -8,6 +8,12 @@ public class SC_Splash : SceneController
     [SerializeField] private float WaitTime;
     private float WaitTimer;
 
+    //Forcing the games resolution
+    void Awake()
+    {
+        //Screen.SetResolution(540, 960, false);
+    }
+
     void Start()
     {
         ResetTimer();
