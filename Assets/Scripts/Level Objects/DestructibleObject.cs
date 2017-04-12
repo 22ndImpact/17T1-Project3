@@ -65,7 +65,6 @@ public class DestructibleObject : ColouredObject
 
         while(timeTracker > 0)
         {
-            Debug.Log("Fading: " + timeTracker / FadeTime);
             //Store a temp colour to allow us to modify only the alpha
             Color tempColor = GetComponent<MeshRenderer>().material.color;
             //Lerp the alpha of the temp colour in time with the percentage of fade

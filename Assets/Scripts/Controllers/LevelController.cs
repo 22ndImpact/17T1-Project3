@@ -149,8 +149,6 @@ public class LevelController : MonoBehaviour
     //Triggered when the player has destroyed all the objects
     IEnumerator EndLevel()
     {
-        Debug.Log("End Level");
-
         //Slow Time TODO change hardcoded value
         Time.timeScale = 0.1f;
 
@@ -161,7 +159,6 @@ public class LevelController : MonoBehaviour
         //Stall while timer counts down
         while(StallTimer > 0 )
         {
-            Debug.Log("Stalling: " + StallTimer);
             yield return null;
             StallTimer -= Time.deltaTime;
         }

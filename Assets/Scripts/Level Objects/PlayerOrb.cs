@@ -57,10 +57,12 @@ public class PlayerOrb : ColouredObject
         SC = GetComponent<SphereCollider>();
         Trail = GetComponent<TrailRenderer>();
         Tether = GetComponent<LineRenderer>();
+
+        TrajPred.LoadTrajectoryPredictor();
     }
     void Start()
     {
-        TrajPred.LoadTrajectoryPredictor();
+
     }
     void Update()
     {
@@ -232,6 +234,31 @@ public class PlayerOrb : ColouredObject
         //Activate sound
         GameDirector.LevelManager.CurrentLevel.PlaySound(HitNoise);
     }
+
+    void OnDrawGizmos()
+    {
+        if (orbState == OrbState.Charging)
+        {
+            //Vector3[] points = Curver.MakeSmoothCurve(TrajPred.GetTrajectoryLocations(), 3f);
+
+            Vector3[] points = TrajPred.GetTrajectoryLocations();
+
+            bool ptset = false;
+            Vector3 lastpt = Vector3.zero;
+            for (int j = 0; j < points.Length; j++)
+            {
+                Vector3 wayPoint = points[j];
+                if (ptset)
+                {
+                    //Gizmos.color = new Color(0, 0, 1, 0.5f);
+                    //Gizmos.DrawLine(lastpt, wayPoint);
+                    Debug.DrawLine(lastpt, wayPoint);
+                }
+                lastpt = wayPoint;
+                ptset = true;
+            }
+        }
+    }
 }
 
 [Serializable]
@@ -241,33 +268,66 @@ public class TrajectoryPredictor
     public float DistanceBetweenNodes;
     public float DistanceOfFirstNode;
 
+    public GameObject TrajectoryLinePrefab;
+    GameObject TrajectoryLine;
     public GameObject TrajectoryOrb;
-    List<GameObject> TrajectoryNodeList = new List<GameObject>();
+    public List<GameObject> TrajectoryNodeList = new List<GameObject>();
+    LineRenderer LR;
+    public float TrajectoryFadeInTime;
+    float TrajectoryFadeInTimer;
+    Gradient BaseGradient;
 
     public float VelocityAdjustment; //0.01985 FOR SOME REASON!!!!
 
     public void LoadTrajectoryPredictor()
     {
-        Debug.Log("Create TrajectoryList");
+        #region Set up Trail Container
+        //Instanciate the line object
+        TrajectoryLine = GameObject.Instantiate(TrajectoryLinePrefab);
+        //Extract the line renderer
+        LR = TrajectoryLine.GetComponent<LineRenderer>();
+        //Parent the trajectory to the anchor object
+        TrajectoryLine.transform.parent = GameObject.Find("Anchor").transform;
+        //Centering the line object on the enchor
+        TrajectoryLine.transform.localPosition = Vector3.zero;
+        //Starts the fade in timer
+        TrajectoryFadeInTimer = TrajectoryFadeInTime;
+        //Storing the base gradient for fading in
+        BaseGradient = LR.colorGradient;
+        #endregion
+
         //Loads the predictor
-        LoadTrajectoryPredictor(TrajectoryNodes);
+        PopulateTrajectoryPredictor(TrajectoryNodes);
     }
 
-    public void LoadTrajectoryPredictor(int _Steps)
+    public Vector3[] GetTrajectoryLocations()
+    {
+        Vector3[] PositionList = new Vector3[TrajectoryNodes];
+
+        for (int i = 0; i < TrajectoryNodes; i++)
+        {
+            PositionList[i] = TrajectoryNodeList[i].transform.position;
+        }
+
+        return PositionList;
+    }
+
+    public void PopulateTrajectoryPredictor(int _Steps)
     {
         for (int i = 0; i < _Steps; i++)
         {
             GameObject newNode = GameObject.Instantiate(TrajectoryOrb);
-            //Turns all of the off to start with
-            newNode.SetActive(false);
+            //Set parent to container
+            newNode.transform.parent = TrajectoryLine.transform;
+            //Add the node to the list
             TrajectoryNodeList.Add(newNode);
-
         }
     }
 
     public void UpdateTrajectory(Vector3 pStartPosition, Vector3 pVelocity)
     {
-        Vector3 AdjustedVelocity = pVelocity * VelocityAdjustment; 
+        #region Determine Node Positions
+        Vector3 AdjustedVelocity = pVelocity * VelocityAdjustment;
 
         float velocity = Mathf.Sqrt((AdjustedVelocity.x * AdjustedVelocity.x) + (AdjustedVelocity.y * AdjustedVelocity.y));
         float angle = Mathf.Rad2Deg * (Mathf.Atan2(AdjustedVelocity.y, AdjustedVelocity.x));
@@ -284,37 +344,65 @@ public class TrajectoryPredictor
             TrajectoryNodeList[i].transform.position = pos;
             fTime += DistanceBetweenNodes;
         }
+
+        for (int i = 0; i < TrajectoryNodeList.Count; i++)
+        {
+            if (i == 0)
+            {
+                TrajectoryNodeList[i].transform.LookAt(pStartPosition);
+            }
+            else
+            {
+                TrajectoryNodeList[i].transform.LookAt(TrajectoryNodeList[i - 1].transform.position);
+            }
+        }
+        #endregion
+
+        #region Adjust Line Renderer
+        LR.numPositions = GetTrajectoryLocations().Length;
+
+        Vector3[] points = GetTrajectoryLocations();
+        for (int j = 0; j < points.Length; j++)
+        {
+            Vector3 wayPoint = points[j];
+            LR.SetPosition(j, wayPoint);
+        }
+
+        #region Trajectory fade in
+        //Counts down the trajectory fade in
+        if (TrajectoryFadeInTimer > 0)
+        {
+            //Reduce the timer
+            TrajectoryFadeInTimer -= Time.smoothDeltaTime;
+            //Create a placeholder gradient
+            Gradient newGradient = new Gradient();
+            //Alter alpha on gradient
+            newGradient.SetKeys(LR.colorGradient.colorKeys, new GradientAlphaKey[] {
+            new GradientAlphaKey(Mathf.Lerp(BaseGradient.alphaKeys[0].alpha, 0, TrajectoryFadeInTimer / TrajectoryFadeInTime), 0.0f),
+            new GradientAlphaKey(Mathf.Lerp(BaseGradient.alphaKeys[1].alpha, 0, TrajectoryFadeInTimer / TrajectoryFadeInTime), 1.0f) });
+            //Apply new gradient
+            LR.colorGradient = newGradient;
+        }
+
+        #endregion
+
+        #endregion
     }
 
     public void ShowTrajectory()
     {
-        //Loops through each predictor
-        for (int i = 0; i < TrajectoryNodeList.Count; i++)
-        {
-            //Turns on the orbs
-            TrajectoryNodeList[i].SetActive(true);           
-        }
+        TrajectoryLine.SetActive(true);
     }
 
     public void HideTrajectory()
     {
-        //Loops through each predictor
-        for (int i = 0; i < TrajectoryNodeList.Count; i++)
-        {
-            //Turns on the orbs
-            TrajectoryNodeList[i].SetActive(false);
-        }
+        TrajectoryLine.SetActive(false);
     }
 
     public void DestroyTrajectory()
     {
-        //Loops through each predictor
-        for (int i = 0; i < TrajectoryNodeList.Count; i++)
-        {
-            //Turns on the orbs
-            GameObject.Destroy(TrajectoryNodeList[i]);
-        }
+        GameObject.Destroy(TrajectoryLine);
     }
+
+    
 }
-
-
