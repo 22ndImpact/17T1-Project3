@@ -67,22 +67,30 @@ public class LevelController : MonoBehaviour
         Reload();
 
         //Increase the Orbs used by 1
-        AdjustOrbsUsed(1);
+        //AdjustOrbsUsed(1);
     }
 
+    //TODO Make event system
     public void AdjustOrbsUsed(int _OrbsUsed)
     {
         orbsUsed += _OrbsUsed;
+
+
+        if(orbsUsed > passScore)
+        {
+            StartCoroutine(EndLevel());
+        }
     }
 
+    //TODO make event system
     //Triggered when any destructible object is destroyed
-    public void ObjectDestroyed(DestructibleObject _Object)
+    public void ObjectsDestroyed(int _NumObjects)
     {
         //Reduce the remaining amount of Destroyable objects by 1
-        DestructibleObjectCount -= 1;
+        DestructibleObjectCount -= _NumObjects;
 
         //If you reach 0, trigger the end of the level
-        if (DestructibleObjectCount == 0)
+        if (DestructibleObjectCount <= 0)
         {
             StartCoroutine(EndLevel());
         }

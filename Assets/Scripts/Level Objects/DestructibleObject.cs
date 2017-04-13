@@ -23,6 +23,8 @@ public class DestructibleObject : ColouredObject
 
                 //Set orbs used to lots
                 GameDirector.LevelManager.CurrentLevel.AdjustOrbsUsed(99);
+
+                GameDirector.LevelManager.CurrentLevel.ObjectsDestroyed(99);
             }
         }
     }
@@ -55,8 +57,8 @@ public class DestructibleObject : ColouredObject
         //Set to fading, to stop double death situations
         Fading = true;
 
-        //Set the object to be destroyed
-        GameDirector.LevelManager.CurrentLevel.ObjectDestroyed(this);
+        //Set the object to be destroyed TODO make this an event system
+        GameDirector.LevelManager.CurrentLevel.ObjectsDestroyed(1);
 
         //Stores the initial alpha of the object to lerp from
         float startignAlpha = GetComponent<MeshRenderer>().material.color.a;

@@ -58,7 +58,7 @@ public class PlayerOrb : ColouredObject
         Trail = GetComponent<TrailRenderer>();
         Tether = GetComponent<LineRenderer>();
 
-        TrajPred.LoadTrajectoryPredictor();
+        TrajPred.LoadTrajectoryPredictor(this);
     }
     void Start()
     {
@@ -183,6 +183,16 @@ public class PlayerOrb : ColouredObject
         return (Anchor.position - transform.position) * launchForceMultiplier;
     }
 
+    //Returns the percentage of distance dragged from the anchor based on max drag distance
+    public float CurrentDragPercentage
+    {
+        get
+        {
+            return (transform.position - Anchor.position).magnitude / dragLimit;
+        }
+        
+    }
+
     //Updates the trail and texture colour of the object based on the colour state
     public override void UpdateColour()
     {
@@ -218,6 +228,16 @@ public class PlayerOrb : ColouredObject
     //TODO code review this hack job
     void OnCollisionEnter(Collision _Collision)
     {
+        //TODO Debug testing for new scoring method
+        //If you hit anything that isnt a player, add 1 point
+        if (_Collision.contacts[0].otherCollider.gameObject.tag != "Player")
+        {
+            GameDirector.LevelManager.CurrentLevel.AdjustOrbsUsed(1);
+        }
+        
+        
+
+
         //Create a particle prefab
         GameObject newParticleEmitter = Instantiate(Particle_Collision);
 
@@ -264,6 +284,8 @@ public class PlayerOrb : ColouredObject
 [Serializable]
 public class TrajectoryPredictor
 {
+
+    PlayerOrb PlayerOrb;
     public int TrajectoryNodes;
     public float DistanceBetweenNodes;
     public float DistanceOfFirstNode;
@@ -277,11 +299,17 @@ public class TrajectoryPredictor
     float TrajectoryFadeInTimer;
     Gradient BaseGradient;
 
+    //The max thickness of the trajectory line
+    public float MaxLineThickness;
+    public float MinLineThickness;
+
     public float VelocityAdjustment; //0.01985 FOR SOME REASON!!!!
 
-    public void LoadTrajectoryPredictor()
+    public void LoadTrajectoryPredictor(PlayerOrb _PlayerOrb)
     {
         #region Set up Trail Container
+        //Set the player orb for reference
+        PlayerOrb = _PlayerOrb;
         //Instanciate the line object
         TrajectoryLine = GameObject.Instantiate(TrajectoryLinePrefab);
         //Extract the line renderer
@@ -367,6 +395,10 @@ public class TrajectoryPredictor
             Vector3 wayPoint = points[j];
             LR.SetPosition(j, wayPoint);
         }
+
+        //Based on velocity of orb determine the thickness of the 
+        Debug.Log(PlayerOrb.CurrentDragPercentage);
+        LR.widthMultiplier = Mathf.Clamp(MaxLineThickness * (1 - PlayerOrb.CurrentDragPercentage), MinLineThickness, MaxLineThickness);
 
         #region Trajectory fade in
         //Counts down the trajectory fade in
