@@ -11,4 +11,12 @@ public static class ObjectFinder
             return GameObject.FindGameObjectWithTag("Anchor").transform;
         }
     }
+
+    public static LevelUIController levelUIController
+    {
+        get
+        {
+            return GameObject.FindGameObjectWithTag("LevelUI").GetComponent<LevelUIController>();
+        }
+    }
 }

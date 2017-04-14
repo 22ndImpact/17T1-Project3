@@ -229,30 +229,31 @@ public class PlayerOrb : ColouredObject
     void OnCollisionEnter(Collision _Collision)
     {
         //TODO Debug testing for new scoring method
-        //If you hit anything that isnt a player, add 1 point
-        if (_Collision.contacts[0].otherCollider.gameObject.tag != "Player")
+        if(GameDirector.LevelManager.CurrentLevel.LevelOver == false)
         {
-            GameDirector.LevelManager.CurrentLevel.AdjustOrbsUsed(1);
+            //If you hit anything that isnt a player, add 1 point
+            if (_Collision.contacts[0].otherCollider.gameObject.tag == "Wall")
+            {
+                GameDirector.LevelManager.CurrentLevel.AdjustOrbsUsed(1);
+            }
+        
+            //Create a particle prefab
+            GameObject newParticleEmitter = Instantiate(Particle_Collision);
+
+            //Change the position to the collision point
+            newParticleEmitter.transform.position = _Collision.contacts[0].point;
+
+            //Adjust its colour
+            ParticleSystem.MainModule settings = newParticleEmitter.GetComponent<ParticleSystem>().main;
+            settings.startColor = new ParticleSystem.MinMaxGradient(gameObject.GetComponent<MeshRenderer>().material.color);
+
+            //Adjust its rotation
+            newParticleEmitter.transform.rotation *= Quaternion.FromToRotation(Vector3.up, _Collision.contacts[0].normal);
+
+            //Activate sound
+            GameDirector.LevelManager.CurrentLevel.PlaySound(HitNoise);
+
         }
-        
-        
-
-
-        //Create a particle prefab
-        GameObject newParticleEmitter = Instantiate(Particle_Collision);
-
-        //Change the position to the collision point
-        newParticleEmitter.transform.position = _Collision.contacts[0].point;
-
-        //Adjust its colour
-        ParticleSystem.MainModule settings = newParticleEmitter.GetComponent<ParticleSystem>().main;
-        settings.startColor = new ParticleSystem.MinMaxGradient(gameObject.GetComponent<MeshRenderer>().material.color);
-
-        //Adjust its rotation
-        newParticleEmitter.transform.rotation *= Quaternion.FromToRotation(Vector3.up, _Collision.contacts[0].normal);
-
-        //Activate sound
-        GameDirector.LevelManager.CurrentLevel.PlaySound(HitNoise);
     }
 
     void OnDrawGizmos()
@@ -397,7 +398,6 @@ public class TrajectoryPredictor
         }
 
         //Based on velocity of orb determine the thickness of the 
-        Debug.Log(PlayerOrb.CurrentDragPercentage);
         LR.widthMultiplier = Mathf.Clamp(MaxLineThickness * (1 - PlayerOrb.CurrentDragPercentage), MinLineThickness, MaxLineThickness);
 
         #region Trajectory fade in

@@ -13,7 +13,6 @@ public class LevelDataCollection : ScriptableObject
 public class LevelData
 {
     public string LevelID;
-    public float ReloadTime;
     public int PassScore;
     public int PerfectScore;
     public int BestScore;

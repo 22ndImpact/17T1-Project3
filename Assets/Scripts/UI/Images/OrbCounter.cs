@@ -65,12 +65,13 @@ public class OrbCounter : MonoBehaviour
 	void Update ()
     {
         //Determine Target 
-        CompletionTargetScale.x = Mathf.Clamp01((float)GameDirector.LevelManager.CurrentLevel.orbsUsed / (float)GameDirector.LevelManager.CurrentLevel.passScore);
+        CompletionTargetScale.x = Mathf.Clamp01((float)GameDirector.LevelManager.CurrentLevel.wallHits / (float)GameDirector.LevelManager.CurrentLevel.passScore);
         //Lerp To Target
         CompletionBar.transform.localScale =  Vector3.Lerp(CompletionBar.GetComponent<RectTransform>().localScale,  CompletionTargetScale, BarLerpSpeed);
 
         //Determine Target
         TrackerTargetPosition.x = CompletionBar.GetComponent<RectTransform>().localPosition.x + (CompletionBar.GetComponent<RectTransform>().rect.width * CompletionBar.GetComponent<RectTransform>().localScale.x);
+        
         //Follow lerped target
         TrackerIcon.GetComponent<RectTransform>().localPosition = TrackerTargetPosition;
 
@@ -80,11 +81,11 @@ public class OrbCounter : MonoBehaviour
 
     void UpdateColour()
     {
-        if(GameDirector.LevelManager.CurrentLevel.orbsUsed <= GameDirector.LevelManager.CurrentLevel.perfectScore)
+        if(GameDirector.LevelManager.CurrentLevel.wallHits <= GameDirector.LevelManager.CurrentLevel.perfectScore)
         {
             TrackerIcon.GetComponent<Image>().color = ColourPerfect;
         }
-        else if(GameDirector.LevelManager.CurrentLevel.orbsUsed <= GameDirector.LevelManager.CurrentLevel.passScore)
+        else if(GameDirector.LevelManager.CurrentLevel.wallHits <= GameDirector.LevelManager.CurrentLevel.passScore)
         {
             TrackerIcon.GetComponent<Image>().color = ColourPass;
         }

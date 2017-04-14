@@ -8,6 +8,7 @@ public class LevelController : MonoBehaviour
     public LevelData levelData;
     [SerializeField] private PrefabList PrefabList;
     private Transform Anchor;
+    public LevelUIController levelUIController;
     
 
     //Level Data Values
@@ -17,10 +18,11 @@ public class LevelController : MonoBehaviour
     public int bestScore;
 
     //Tracking Values
-    public int orbsUsed;
+    public int wallHits;
     public float reloadTimer;
     public bool reloading;
     public int DestructibleObjectCount;
+    public bool LevelOver;
 
     //The time it takes to end the level
     float EndOfLevelStall = 1f;
@@ -28,6 +30,8 @@ public class LevelController : MonoBehaviour
     #region Mono Behaviour Events
     void Awake()
     {
+        LevelOver = false;
+
         //Resets the time scale back to 1, this is a fail safe incase of restarts during slow mo
         Time.timeScale = 1;
 
@@ -73,16 +77,17 @@ public class LevelController : MonoBehaviour
     //TODO Make event system
     public void AdjustOrbsUsed(int _OrbsUsed)
     {
-        orbsUsed += _OrbsUsed;
+        wallHits += _OrbsUsed;
 
 
-        if(orbsUsed > passScore)
+        if(wallHits >= passScore)
         {
-            StartCoroutine(EndLevel());
+            if (LevelOver == false)
+                StartCoroutine(EndLevel());
         }
     }
 
-    //TODO make event system
+    //TODO make event system 
     //Triggered when any destructible object is destroyed
     public void ObjectsDestroyed(int _NumObjects)
     {
@@ -92,7 +97,8 @@ public class LevelController : MonoBehaviour
         //If you reach 0, trigger the end of the level
         if (DestructibleObjectCount <= 0)
         {
-            StartCoroutine(EndLevel());
+            if (LevelOver == false)
+                StartCoroutine(EndLevel());
         }
     }
 
@@ -132,7 +138,6 @@ public class LevelController : MonoBehaviour
         levelData = GameDirector.LevelManager.GetLevelData(GameDirector.LevelManager.GetLevelIDFromScene(GameDirector.SceneManager.CurrentSceneName));
         //levelData = GameDirector.LevelManager.GetLevelData(GameDirector.LevelManager.CurrentLevelID);
 
-        reloadTime = levelData.ReloadTime;
         passScore = levelData.PassScore;
         perfectScore = levelData.PerfectScore;
         bestScore = levelData.BestScore;
@@ -152,11 +157,14 @@ public class LevelController : MonoBehaviour
     {
         Anchor = ObjectFinder.Anchor;
         DestructibleObjectCount = GameObject.FindGameObjectsWithTag("Destructible").Length;
+        levelUIController = ObjectFinder.levelUIController;
     }
 
     //Triggered when the player has destroyed all the objects
     IEnumerator EndLevel()
     {
+        LevelOver = true;
+
         //Slow Time TODO change hardcoded value
         Time.timeScale = 0.1f;
 
@@ -177,7 +185,10 @@ public class LevelController : MonoBehaviour
         Time.timeScale = 1;
         UpdateBestScore();
         SaveLevelData();
-        GameDirector.SceneManager.ChangeScene(GD_SceneManager.SceneList.LevelComplete);
+
+        //Replace this with the UI panel lerping upwards
+        levelUIController.StartEndGameTrainsition();
+        //GameDirector.SceneManager.ChangeScene(GD_SceneManager.SceneList.LevelComplete);
         #endregion
     }
 
@@ -201,13 +212,13 @@ public class LevelController : MonoBehaviour
     public void UpdateBestScore()
     {
         //Updating best score if it is better
-        if (orbsUsed < bestScore)
+        if (wallHits < bestScore)
         {
-            bestScore = orbsUsed;
+            bestScore = wallHits;
         }
 
         //Check if the level is completed, and is so unlock the next one
-        if(bestScore <= passScore)
+        if(bestScore < passScore)
         {
             Debug.Log("unlock next level");
             UnlockNextLevel();
