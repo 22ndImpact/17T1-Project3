@@ -47,12 +47,9 @@ public class LevelUIController : MonoBehaviour
 
     public void UpdateEndGameTransition()
     {
-        Debug.Log("Transitioning");
 
         //Reduce Transition Timer
         TransitionTimer -= Time.smoothDeltaTime;
-
-        Debug.Log(TransitionCurve.Evaluate(1 - (TransitionTimer / TransitionTime)));
 
         //Change position based on animation curve
         GameUIPanel.transform.localPosition = new Vector3(UIStartingPosition.x,
