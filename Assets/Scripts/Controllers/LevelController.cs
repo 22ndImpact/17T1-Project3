@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class LevelController : MonoBehaviour
 {
@@ -18,7 +19,7 @@ public class LevelController : MonoBehaviour
     public int bestScore;
 
     //Tracking Values
-    public int wallHits;
+    public int orbsUsed;
     public float reloadTimer;
     public bool reloading;
     public int DestructibleObjectCount;
@@ -59,8 +60,11 @@ public class LevelController : MonoBehaviour
 	}
 	void Update ()
     {
-        //updates the reload timer if reloading.
-        UpdateReloadTimer();
+        //updates the reload input check if reloading.
+        if(reloading)
+        {
+            CheckForReload();
+        }
     }
     #endregion
 
@@ -68,19 +72,16 @@ public class LevelController : MonoBehaviour
     public void OrbShot()
     {
         //Start the reload process
-        Reload();
-
-        //Increase the Orbs used by 1
-        //AdjustOrbsUsed(1);
+        reloading = true;
     }
 
     //TODO Make event system
     public void AdjustOrbsUsed(int _OrbsUsed)
     {
-        wallHits += _OrbsUsed;
+        orbsUsed += _OrbsUsed;
 
 
-        if(wallHits >= passScore)
+        if(orbsUsed >= passScore)
         {
             if (LevelOver == false)
                 StartCoroutine(EndLevel());
@@ -102,32 +103,15 @@ public class LevelController : MonoBehaviour
         }
     }
 
-    //Resets the timer and sets reloading to True
-    public void Reload()
+    //Check for player inpotu to spawn an orb
+    void CheckForReload()
     {
-        //Reset the timer back to 0
-        reloadTimer = reloadTime;
-        //Notify the class you are reloading
-        reloading = true;
-    }
-
-    //Counts the Reload Timer down, and spawns an orb after completion
-    void UpdateReloadTimer()
-    {
-        if (reloading)
+        if(InputController.LeftMouseButtonDown && !InputController.IsPointerOverUIObject())
         {
-            //If you are still havent reached 0 keep counting
-            if (reloadTimer > 0)
-            {
-                reloadTimer -= Time.deltaTime;
-            }
-            //Once you get to 0, spawn the orb and turn off reloading
-            else
-            {
-                SpawnOrb();
-                reloading = false;
-            }
-                
+            //Updates the used orbs by 1
+            AdjustOrbsUsed(1);
+            SpawnOrb();
+            reloading = false;
         }
     }
 
@@ -212,9 +196,9 @@ public class LevelController : MonoBehaviour
     public void UpdateBestScore()
     {
         //Updating best score if it is better
-        if (wallHits < bestScore)
+        if (orbsUsed < bestScore)
         {
-            bestScore = wallHits;
+            bestScore = orbsUsed;
         }
 
         //Check if the level is completed, and is so unlock the next one

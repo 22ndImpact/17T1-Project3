@@ -15,11 +15,11 @@ public class CompletionText : MonoBehaviour
     public void UpdateState()
     {
         //Sets the colour of the background image based on current score
-        if (GameDirector.LevelManager.CurrentLevel.wallHits < GameDirector.LevelManager.CurrentLevel.perfectScore)
+        if (GameDirector.LevelManager.CurrentLevel.orbsUsed < GameDirector.LevelManager.CurrentLevel.perfectScore)
         {
             text.text = TextPerfect;
         }
-        else if (GameDirector.LevelManager.CurrentLevel.wallHits < GameDirector.LevelManager.CurrentLevel.passScore)
+        else if (GameDirector.LevelManager.CurrentLevel.orbsUsed < GameDirector.LevelManager.CurrentLevel.passScore)
         {
             text.text = TextPass;
         }

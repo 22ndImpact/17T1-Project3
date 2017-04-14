@@ -102,7 +102,7 @@ public class PlayerOrb : ColouredObject
     void UpdateInput()
     {
         //If you click within range of the orb change to chargign state. And not over a button
-        if (InputController.LeftMouseButtonDown && orbState == OrbState.Static && InputController.MouseOnPoint(transform.position, dragRadius) && !EventSystem.current.IsPointerOverGameObject())
+        if (InputController.LeftMouseButton && orbState == OrbState.Static && InputController.MouseOnPoint(transform.position, dragRadius) && !InputController.IsPointerOverUIObject())
             ChangeState(OrbState.Charging);
 
         //If you left go of the left mouse button which charging, fire the orb
@@ -234,7 +234,7 @@ public class PlayerOrb : ColouredObject
             //If you hit anything that isnt a player, add 1 point
             if (_Collision.contacts[0].otherCollider.gameObject.tag == "Wall")
             {
-                GameDirector.LevelManager.CurrentLevel.AdjustOrbsUsed(1);
+                //GameDirector.LevelManager.CurrentLevel.AdjustOrbsUsed(1);
             }
         
             //Create a particle prefab

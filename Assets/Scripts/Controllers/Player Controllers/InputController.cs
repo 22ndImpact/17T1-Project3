@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public static class InputController
 {
@@ -24,6 +25,17 @@ public static class InputController
         {
             return Input.GetMouseButton(0);
         }
+    }
+
+    public static bool IsPointerOverUIObject()
+    {
+        // Code utility from http://answers.unity3d.com/questions/1115464/ispointerovergameobject-not-working-with-touch-inp.html
+        // this works the same as the usual event systems "cursor on object" but also works with touch interfaces
+        PointerEventData eventDataCurrentPosition = new PointerEventData(EventSystem.current);
+        eventDataCurrentPosition.position = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
+        List<RaycastResult> results = new List<RaycastResult>();
+        EventSystem.current.RaycastAll(eventDataCurrentPosition, results);
+        return results.Count > 0;
     }
 
 
