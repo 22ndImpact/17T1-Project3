@@ -24,8 +24,13 @@ public class Button_LevelCompleteContinue : MonoBehaviour
         }
     }
 
+    //Different to a normal scene change. This will unload the old level and load the new one, without destroying the other loaded scenes (LevelUI)
     public void LoadLevel()
     {
-        GameDirector.LevelManager.LoadLevel(GameDirector.LevelManager.CurrentLevelID + 1);
+        GameDirector.LevelManager.UnloadLevel(GameDirector.LevelManager.CurrentLevelID);
+        GameDirector.LevelManager.LoadLevelAdditive(GameDirector.LevelManager.CurrentLevelID + 1);
+
+        //Transition the new level In
+        GameDirector.LevelManager.levelUIController.StartLevelOpeningTransition();
     }
 }

@@ -7,20 +7,29 @@ public class LevelUIController : MonoBehaviour
 {
     //Tweaking Values
     public float TransitionTime;
-    public AnimationCurve TransitionCurve;
+    public AnimationCurve TransitionOutCurve;
+    public AnimationCurve TransitionInCurve;
 
     //Object references
     public GameObject GameUIPanel;
     public Button_LevelCompleteContinue LevelCompleteButton;
     public CompletionImage LevelCompletionImage;
     public CompletionText LevelCompletionText;
+    public OrbCounter orbCounter;
 
     //The top and bottom values of the end game panel at the start of the level
     public Vector3 UIStartingPosition;
 
     //Tracking Values
     public float TransitionTimer;
-    public bool Transitioning = false;
+    public bool TransitioningOut = false;
+    public bool TransitioningIn = false;
+
+    void Awake()
+    {
+        //Set this level ui to be level UI of the current level
+        GameDirector.LevelManager.levelUIController = this;
+    }
 
     void Start()
     {
@@ -29,23 +38,34 @@ public class LevelUIController : MonoBehaviour
 
     void Update()
     {
-        if(Transitioning)
+        if(TransitioningOut)
         {
-            UpdateEndGameTransition();
+            UpdateClosingTransition();
+        }
+
+        if(TransitioningIn)
+        {
+            UpdateOpeningTransition();
         }
     }
 
-    public void StartEndGameTrainsition()
+    public void StartLevelClosingTransition()
     {
         TransitionTimer = TransitionTime;
-        Transitioning = true;
+        TransitioningOut = true;
 
         LevelCompleteButton.UpdateState();
         LevelCompletionImage.UpdateState();
         LevelCompletionText.UpdateState();
     }
 
-    public void UpdateEndGameTransition()
+    public void StartLevelOpeningTransition()
+    {
+        TransitionTimer = TransitionTime;
+        TransitioningIn = true;
+    }
+
+    public void UpdateClosingTransition()
     {
 
         //Reduce Transition Timer
@@ -53,9 +73,32 @@ public class LevelUIController : MonoBehaviour
 
         //Change position based on animation curve
         GameUIPanel.transform.localPosition = new Vector3(UIStartingPosition.x,
-                                                          UIStartingPosition.y  - (UIStartingPosition.y * (TransitionCurve.Evaluate( 1- (TransitionTimer / TransitionTime)))),
+                                                          UIStartingPosition.y  - (UIStartingPosition.y * (TransitionOutCurve.Evaluate( 1- (TransitionTimer / TransitionTime)))),
                                                           UIStartingPosition.z);
+
+        //checking if the transtiion is complete
+        if(TransitionTimer <= 0)
+        {
+            TransitioningOut = false;
+        }
     }
 
+    public void UpdateOpeningTransition()
+    {
+
+        //Reduce Transition Timer
+        TransitionTimer -= Time.smoothDeltaTime;
+
+        //Change position based on animation curve
+        GameUIPanel.transform.localPosition = new Vector3(UIStartingPosition.x,
+                                                          UIStartingPosition.y - (UIStartingPosition.y * (TransitionInCurve.Evaluate(1 - (TransitionTimer / TransitionTime)))),
+                                                          UIStartingPosition.z);
+
+        //checking if the transtiion is complete
+        if (TransitionTimer <= 0)
+        {
+            TransitioningIn = false;
+        }
+    }
 
 }

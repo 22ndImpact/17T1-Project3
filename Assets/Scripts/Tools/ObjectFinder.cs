@@ -16,7 +16,12 @@ public static class ObjectFinder
     {
         get
         {
-            return GameObject.FindGameObjectWithTag("LevelUI").GetComponent<LevelUIController>();
+            if(GameObject.FindGameObjectWithTag("LevelUI") != null)
+            {
+                return GameObject.FindGameObjectWithTag("LevelUI").GetComponent<LevelUIController>();
+            }
+
+            return null;
         }
     }
 }

@@ -14,6 +14,8 @@ public class LevelController : MonoBehaviour
 
     //Level Data Values
     [SerializeField] private float reloadTime;
+    public string LevelName;
+    public int LevelID;
     public int passScore;
     public int perfectScore;
     public int bestScore;
@@ -31,13 +33,22 @@ public class LevelController : MonoBehaviour
     #region Mono Behaviour Events
     void Awake()
     {
+        //Set the level over to false so the game doesnt think the previous level is still over
         LevelOver = false;
+
+        //Check if the LevelUI Scene is loaded. and if not load it
+        if (!GameDirector.SceneManager.CheckIfSceneActive("LevelUI"))
+        {
+            Debug.Log("loading level UI");
+            GameDirector.SceneManager.LoadScene("LevelUI");
+        }
+
 
         //Resets the time scale back to 1, this is a fail safe incase of restarts during slow mo
         Time.timeScale = 1;
 
         //Sets the current level based on scene name
-        GameDirector.LevelManager.CurrentLevelID = GameDirector.LevelManager.GetLevelIDFromScene(GameDirector.SceneManager.CurrentSceneName);
+        GameDirector.LevelManager.CurrentLevelID = GameDirector.LevelManager.GetLevelIDFromScene(GameDirector.SceneManager.CurrenLevelSceneName);
 
         //Attempts to populate the level list
         GameDirector.LevelManager.PopulateLevelList();
@@ -45,19 +56,28 @@ public class LevelController : MonoBehaviour
         //Updates the level manager that this level is the current one
         GameDirector.LevelManager.CurrentLevel = this;
 
-
-
         //Takes the values form the scriptable object and applies them to the level
         InitializeFromLevelData();
 
         //Finds all the relevent object in the level
         FindObjects();
+
+        //Attempt to find the level UI
+        if(GameObject.FindGameObjectWithTag("LevelUI") != null)
+        {
+            levelUIController = GameObject.FindGameObjectWithTag("LevelUI").GetComponent<LevelUIController>();
+        }
+
+        
     }
 	void Start ()
     {
         //Spawns the starting orb at the start of the level
         SpawnOrb();
-	}
+
+        //Initialize a new level with the orb counter
+        GameDirector.LevelManager.levelUIController.orbCounter.InitializeNewLevel(GameDirector.LevelManager.CurrentLevel);
+    }
 	void Update ()
     {
         //updates the reload input check if reloading.
@@ -119,9 +139,11 @@ public class LevelController : MonoBehaviour
     void InitializeFromLevelData()
     {
         //Debug line that gets the level ID from the scene name itself instead of the level manager. This is so the level can run before the "Levelload" fucntion has been called
-        levelData = GameDirector.LevelManager.GetLevelData(GameDirector.LevelManager.GetLevelIDFromScene(GameDirector.SceneManager.CurrentSceneName));
+        levelData = GameDirector.LevelManager.GetLevelData(GameDirector.LevelManager.GetLevelIDFromScene(GameDirector.SceneManager.CurrenLevelSceneName));
         //levelData = GameDirector.LevelManager.GetLevelData(GameDirector.LevelManager.CurrentLevelID);
 
+        LevelName = levelData.LevelName;
+        LevelID = levelData.LevelID;
         passScore = levelData.PassScore;
         perfectScore = levelData.PerfectScore;
         bestScore = levelData.BestScore;
@@ -171,7 +193,7 @@ public class LevelController : MonoBehaviour
         SaveLevelData();
 
         //Replace this with the UI panel lerping upwards
-        levelUIController.StartEndGameTrainsition();
+        GameDirector.LevelManager.levelUIController.StartLevelClosingTransition();
         //GameDirector.SceneManager.ChangeScene(GD_SceneManager.SceneList.LevelComplete);
         #endregion
     }
@@ -180,7 +202,7 @@ public class LevelController : MonoBehaviour
     public void SaveLevelData()
     {
         //Debug line that gets the level ID from the scene name itself instead of the level manager. This is so the level can run before the "Levelload" fucntion has been called
-        levelData = GameDirector.LevelManager.GetLevelData(GameDirector.LevelManager.GetLevelIDFromScene(GameDirector.SceneManager.CurrentSceneName));
+        levelData = GameDirector.LevelManager.GetLevelData(GameDirector.LevelManager.GetLevelIDFromScene(GameDirector.SceneManager.CurrenLevelSceneName));
 
         //Locating level data object in global list
         //levelData = GameDirector.LevelManager.GetLevelData(GameDirector.LevelManager.CurrentLevelID);
@@ -218,7 +240,6 @@ public class LevelController : MonoBehaviour
     {
         GetComponent<AudioSource>().PlayOneShot(_clip);
     }
-
 
 }
 

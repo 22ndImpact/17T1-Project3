@@ -26,7 +26,7 @@ public class SC_Splash : SceneController
 
     void LoadMainMenu()
     {
-        GameDirector.SceneManager.ChangeScene(GD_SceneManager.SceneList.MainMenu);
+        GameDirector.SceneManager.ChangeScene(GD_SceneManager.PrimarySceneList.MainMenu);
     }
 
     void ResetTimer()

@@ -12,7 +12,8 @@ public class LevelDataCollection : ScriptableObject
 [System.Serializable]
 public class LevelData
 {
-    public string LevelID;
+    public string LevelName;
+    public int LevelID;
     public int PassScore;
     public int PerfectScore;
     public int BestScore;

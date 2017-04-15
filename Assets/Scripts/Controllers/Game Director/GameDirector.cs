@@ -22,16 +22,37 @@ public class GD_SceneManager
         }
     }
 
-    public enum SceneList
+    //Created to extract the scene name of a currently loaded level when it is not the only scene current loaded
+    public string CurrenLevelSceneName
+    {
+        get
+        {
+            for (int i = 0; i < SceneManager.sceneCount; i++)
+            {
+                if(SceneManager.GetSceneAt(i).name.Contains("Level_"))
+                {
+                    return SceneManager.GetSceneAt(i).name;
+                }
+            }
+
+            return "No Level Loaded";
+        }
+    }
+
+    public bool CheckIfSceneActive(string _SceneName)
+    {
+        Scene checkScene = SceneManager.GetSceneByName(_SceneName);
+        return checkScene.isLoaded;
+    }
+
+    public enum PrimarySceneList
     {
         Splash,
         MainMenu,
-        Trophies,
-        LevelSelect,
-        LevelComplete
+        LevelSelect
     }
 
-    public void ChangeScene(SceneList _Scene)
+    public void ChangeScene(PrimarySceneList _Scene)
     {
         SceneManager.LoadScene((int)_Scene, LoadSceneMode.Single);
     }
@@ -89,6 +110,8 @@ public class GD_LevelManager
 
     public LevelController CurrentLevel;
 
+    public LevelUIController levelUIController;
+
     //List of persistant level data that is used by the level selector and updated by indervidual level controllers
     List<LevelData> LevelDataList = new List<LevelData>();
 
@@ -125,7 +148,7 @@ public class GD_LevelManager
     {
         foreach(LevelData levelData in LevelDataList)
         {
-            if(levelData.LevelID == "Level_" + _LevelID)
+            if(levelData.LevelID == _LevelID)
             {
                 return levelData;
             }
@@ -138,6 +161,18 @@ public class GD_LevelManager
     {
         //Hard coded prefix that corispondes with scene naming convention
         GameDirector.SceneManager.ChangeScene("Level_" + _LevelID);
+    }
+
+    public void LoadLevelAdditive(int _LevelID)
+    {
+        //Hard coded prefix that corispondes with scene naming convention
+        GameDirector.SceneManager.LoadScene("Level_" + _LevelID);
+    }
+
+    public void UnloadLevel(int _LevelID)
+    {
+        //Hard coded prefix that corispondes with scene naming convention
+        GameDirector.SceneManager.UnloadScene("Level_" + _LevelID);
     }
 
     public void SaveLevelData()
