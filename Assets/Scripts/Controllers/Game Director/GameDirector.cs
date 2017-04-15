@@ -126,23 +126,23 @@ public class GD_LevelManager
     //Scans scenes and populates a list of level data based on level scenes
     public void PopulateLevelList()
     {
-        if(LevelListPopulated == false)
-        {
-            //TODO remove: Debug code that always loads from the scriptable object, effectily disabling persistant data. Need to instante this with an instance or it will overwirte the data in the scriptable object
-            LevelDataList = GameObject.Instantiate<LevelDataCollection>(Resources.Load<LevelDataCollection>("ScriptableObjects/Level Collection")).LevelList;
-            LevelListPopulated = true;
-        }
+        //if(LevelListPopulated == false)
+        //{
+        //    //TODO remove: Debug code that always loads from the scriptable object, effectily disabling persistant data. Need to instante this with an instance or it will overwirte the data in the scriptable object
+        //    LevelDataList = GameObject.Instantiate<LevelDataCollection>(Resources.Load<LevelDataCollection>("ScriptableObjects/Level Collection")).LevelList;
+        //    LevelListPopulated = true;
+        //}
 
         #region Proper load and saving code
-        //if (GameDirector.dataManager.SaveDataFound)
-        //{
-        //    LoadLevelData();
-        //}
-        //else
-        //{
-        //    LevelDataList = Resources.Load<LevelDataCollection>("ScriptableObjects/Level Collection").LevelList;
-        //    SaveLevelData();
-        //}
+        if (GameDirector.dataManager.SaveDataFound)
+        {
+            LoadLevelData();
+        }
+        else
+        {
+            LevelDataList = Resources.Load<LevelDataCollection>("ScriptableObjects/Level Collection").LevelList;
+            SaveLevelData();
+        }
         #endregion
     }
 
@@ -155,7 +155,16 @@ public class GD_LevelManager
         }
     }
     
+    public void ResetLocalData()
+    {
+        Debug.Log("resetting level data");
 
+        //Reset data
+        LevelDataList = Resources.Load<LevelDataCollection>("ScriptableObjects/Level Collection").LevelList;
+        SaveLevelData();
+        //Repopulate level list
+        PopulateLevelList();
+    }
 
     //Returns the level data from the level data list that corrispondes to the level id
     public LevelData GetLevelData(int _LevelID)
