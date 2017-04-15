@@ -76,7 +76,7 @@ public class OrbCounter : MonoBehaviour
         }
     }
 	
-    void UpdateProgressBars()
+    public void UpdateProgressBars()
     {
         //Determine Target 
         CompletionTargetScale.x = Mathf.Clamp01((float)GameDirector.LevelManager.CurrentLevel.orbsUsed / (float)GameDirector.LevelManager.CurrentLevel.passScore);

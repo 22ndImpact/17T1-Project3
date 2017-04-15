@@ -6,7 +6,7 @@ using UnityEngine.UI;
 public class LevelUIController : MonoBehaviour
 {
     //Tweaking Values
-    public float TransitionTime;
+    float TransitionTime;
     public AnimationCurve TransitionOutCurve;
     public AnimationCurve TransitionInCurve;
 
@@ -35,6 +35,9 @@ public class LevelUIController : MonoBehaviour
 
     void Start()
     {
+        //Getting the transition timer form the game director
+        TransitionTime = GameDirector.menuController.MenuTransitionTime;
+
         UIStartingPosition = GameUIPanel.transform.localPosition;
     }
 

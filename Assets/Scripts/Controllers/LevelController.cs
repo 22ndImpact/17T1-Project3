@@ -77,6 +77,9 @@ public class LevelController : MonoBehaviour
         {
             CheckForReload();
         }
+
+        //Updates the ui progress bar, while in a level
+        GameDirector.LevelManager.levelUIController.orbCounter.UpdateProgressBars();
     }
     #endregion
 
