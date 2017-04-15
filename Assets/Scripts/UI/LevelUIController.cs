@@ -25,8 +25,11 @@ public class LevelUIController : MonoBehaviour
     public bool TransitioningOut = false;
     public bool TransitioningIn = false;
 
+    public bool MenuUp = false;
+
     void Awake()
     {
+        Debug.Log("setting the level ui controller");
         //Set this level ui to be level UI of the current level
         GameDirector.LevelManager.levelUIController = this;
     }
@@ -38,6 +41,8 @@ public class LevelUIController : MonoBehaviour
 
     void Update()
     {
+        Debug.Log(GameDirector.LevelManager.levelUIController);
+
         if(TransitioningOut)
         {
             UpdateClosingTransition();
@@ -51,6 +56,9 @@ public class LevelUIController : MonoBehaviour
 
     public void StartLevelClosingTransition()
     {
+        //Set the starting position
+        //-UIStartingPosition = GameUIPanel.transform.localPosition;
+
         TransitionTimer = TransitionTime;
         TransitioningOut = true;
 
@@ -61,6 +69,9 @@ public class LevelUIController : MonoBehaviour
 
     public void StartLevelOpeningTransition()
     {
+        //Set the starting position
+        //UIStartingPosition = GameUIPanel.transform.localPosition;
+
         TransitionTimer = TransitionTime;
         TransitioningIn = true;
     }
@@ -79,6 +90,7 @@ public class LevelUIController : MonoBehaviour
         //checking if the transtiion is complete
         if(TransitionTimer <= 0)
         {
+            MenuUp = true;
             TransitioningOut = false;
         }
     }
@@ -97,6 +109,7 @@ public class LevelUIController : MonoBehaviour
         //checking if the transtiion is complete
         if (TransitionTimer <= 0)
         {
+            MenuUp = false;
             TransitioningIn = false;
         }
     }

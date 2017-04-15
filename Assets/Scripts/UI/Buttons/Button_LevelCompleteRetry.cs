@@ -6,10 +6,19 @@ public class Button_LevelCompleteRetry : MonoBehaviour
 {
     public void LoadLevel()
     {
-        GameDirector.LevelManager.UnloadLevel(GameDirector.LevelManager.CurrentLevelID);
-        GameDirector.LevelManager.LoadLevelAdditive(GameDirector.LevelManager.CurrentLevelID);
+        //Dont allow restarting during end level transitions
+        if(!GameDirector.LevelManager.levelUIController.TransitioningIn && !GameDirector.LevelManager.levelUIController.TransitioningOut)
+        {
+            GameDirector.LevelManager.UnloadLevel(GameDirector.LevelManager.CurrentLevelID);
+            GameDirector.LevelManager.LoadLevelAdditive(GameDirector.LevelManager.CurrentLevelID);
+        }
+        
 
-        //Transition the new level in
-        GameDirector.LevelManager.CurrentLevel.levelUIController.StartLevelOpeningTransition();
+        //Only trigger the transition if the end game menu is fully up
+        if(GameDirector.LevelManager.levelUIController.MenuUp)
+        {
+            GameDirector.LevelManager.levelUIController.StartLevelOpeningTransition();
+        }
+        
     }
 }
