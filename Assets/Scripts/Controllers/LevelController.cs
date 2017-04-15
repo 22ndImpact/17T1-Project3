@@ -36,14 +36,6 @@ public class LevelController : MonoBehaviour
         //Set the level over to false so the game doesnt think the previous level is still over
         LevelOver = false;
 
-        //Check if the LevelUI Scene is loaded. and if not load it
-        if (!GameDirector.SceneManager.CheckIfSceneActive("LevelUI"))
-        {
-            Debug.Log("loading level UI");
-            GameDirector.SceneManager.LoadScene("LevelUI");
-        }
-
-
         //Resets the time scale back to 1, this is a fail safe incase of restarts during slow mo
         Time.timeScale = 1;
 
@@ -87,6 +79,11 @@ public class LevelController : MonoBehaviour
         }
     }
     #endregion
+
+    public void StopLevel()
+    {
+
+    }
 
     //Triggered by the orb when it fires
     public void OrbShot()

@@ -19,7 +19,7 @@ public class Button_SelectLevel : MonoBehaviour
     public Text text;
     public Image image;
 
-    void Start()
+    public void RefreshLevelButtonInfo()
     {
         //Sets the unlocked and locked colour and text
         if (GameDirector.LevelManager.GetLevelData(LevelID).Unlocked == false)
@@ -36,7 +36,7 @@ public class Button_SelectLevel : MonoBehaviour
         }
 
         //Changes colour to passed or perfect if needed
-        if(GameDirector.LevelManager.GetLevelData(LevelID).BestScore < GameDirector.LevelManager.GetLevelData(LevelID).PerfectScore)
+        if (GameDirector.LevelManager.GetLevelData(LevelID).BestScore < GameDirector.LevelManager.GetLevelData(LevelID).PerfectScore)
         {
             image.color = ColourPerfect;
         }
@@ -48,6 +48,23 @@ public class Button_SelectLevel : MonoBehaviour
 
     public void LoadLevel()
     {
-        GameDirector.LevelManager.LoadLevel(LevelID);
+        //Moves the menus away from the Camera
+        GameDirector.menuController.ActivateGamePlay();
+
+        //Removes the currently loaded level
+        if(GameDirector.LevelManager.CurrentLevel != null)
+        {
+            GameDirector.SceneManager.UnloadScene(GameDirector.LevelManager.CurrentLevel.LevelName);
+        }
+
+        //Returns the in game menu (if up) to down
+        if(GameDirector.LevelManager.levelUIController.MenuUp)
+        {
+            GameDirector.LevelManager.levelUIController.SetMenuToDown();
+        }
+        
+
+        //Loads the selected level
+        GameDirector.LevelManager.LoadLevelAdditive(LevelID);
     }
 }

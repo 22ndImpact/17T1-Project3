@@ -10,6 +10,7 @@ public static class GameDirector
     public static GD_InputManager InputManager = new GD_InputManager();
     public static GD_LevelManager LevelManager = new GD_LevelManager();
     public static DataManager dataManager = new DataManager();
+    public static MenuController menuController;
 }
 
 public class GD_SceneManager
@@ -104,6 +105,8 @@ public class GD_InputManager
 
 public class GD_LevelManager
 {
+    public List<Button_SelectLevel> LevelSelectButtons = new List<Button_SelectLevel>();
+
     public int CurrentLevelID;
 
     public bool LevelListPopulated = false;
@@ -142,6 +145,17 @@ public class GD_LevelManager
         //}
         #endregion
     }
+
+    //Updates all the informatoin on the level select buttons
+    public void UpdateLevelButtonInfo()
+    {
+        foreach (Button_SelectLevel levelSelectButton in LevelSelectButtons)
+        {
+            levelSelectButton.RefreshLevelButtonInfo();
+        }
+    }
+    
+
 
     //Returns the level data from the level data list that corrispondes to the level id
     public LevelData GetLevelData(int _LevelID)
