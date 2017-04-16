@@ -5,27 +5,29 @@ using UnityEngine.UI;
 
 public class OrbCounter : MonoBehaviour
 {
-    public GameObject NotchPrefab;
 
+    #region Tweaking Variables
+    public Color ColourPerfect;
+    public Color ColourPass;
+    public Color ColourFail;
+    public float BarLerpSpeed;
+    #endregion
+
+    #region Tracking Variables
+    public List<GameObject> NotchList;
+    public Vector3 CompletionTargetScale;
+    public Vector3 TrackerTargetPosition;
+    #endregion
+
+    #region Object References
+    public GameObject NotchPrefab;
     public GameObject PerfectBar;
     public GameObject PassBar;
     public GameObject CompletionBar;
     public RectTransform Notches;
     public GameObject TrackerIcon;
+    #endregion
 
-    public List<GameObject> NotchList;
-
-    public Vector3 CompletionTargetScale;
-    public Vector3 TrackerTargetPosition;
-
-    public float BarLerpSpeed;
-
-    public Color ColourPerfect;
-    public Color ColourPass;
-    public Color ColourFail;
-   
-
-	// Use this for initialization
 	void Start ()
     {
         //Set default targets
@@ -33,12 +35,10 @@ public class OrbCounter : MonoBehaviour
         TrackerTargetPosition = TrackerIcon.GetComponent<RectTransform>().localPosition;
 	}
 
-    // Update is called once per frame
-    void Update()
-    {
-        //Update Progress bars
-    }
-
+    /// <summary>
+    /// Used to set the length of the completion bars and the position of the notches
+    /// </summary>
+    /// <param name="levelToInitialize"></param>
     public void InitializeNewLevel(LevelController levelToInitialize)
     {
         //Destroys all the notches form the previous notch list
@@ -76,6 +76,9 @@ public class OrbCounter : MonoBehaviour
         }
     }
 	
+    /// <summary>
+    /// Updates the position of the progress bars and tracker based on level progress
+    /// </summary>
     public void UpdateProgressBars()
     {
         //Determine Target 
@@ -95,6 +98,9 @@ public class OrbCounter : MonoBehaviour
         UpdateColour();
     }
 
+    /// <summary>
+    /// Updates the colour of the tracker based on level progress
+    /// </summary>
     void UpdateColour()
     {
         if(GameDirector.LevelManager.CurrentLevel.orbsUsed < GameDirector.LevelManager.CurrentLevel.perfectScore)

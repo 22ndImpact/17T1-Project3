@@ -5,20 +5,28 @@ using UnityEngine.UI;
 
 public class Button_SelectLevel : MonoBehaviour
 {
+    #region Tracking variables
     //The ID of the level that this 
     public int LevelID;
-
     public string UnloackedText;
     public string LockedText;
+    #endregion
 
+    #region Tweaking Values
     public Color ColourLocked;
     public Color ColourUnlocked;
     public Color ColourPassed;
     public Color ColourPerfect;
+    #endregion
 
+    #region Component References
     public Text text;
     public Image image;
+    #endregion
 
+    /// <summary>
+    /// Determines the values of the button based on current level data
+    /// </summary>
     public void RefreshLevelButtonInfo()
     {
         //Sets the unlocked and locked colour and text
@@ -46,6 +54,9 @@ public class Button_SelectLevel : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Loads the selected level
+    /// </summary>
     public void LoadLevel()
     {
         //Moves the menus away from the Camera

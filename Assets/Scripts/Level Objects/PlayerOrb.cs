@@ -6,33 +6,7 @@ using UnityEngine.EventSystems;
 
 public class PlayerOrb : ColouredObject
 {
-
-    #region Variables
-
-    //Balance variables
-    [SerializeField] private float orbDragLerpSpeed;
-    [SerializeField] private float launchForceMultiplier;
-    //The radius around the orb that can be clicked to begin a drag
-    [SerializeField] private float dragRadius;
-    //The maximum distance the orb can travel from the anchor while being dragged
-    [SerializeField] private float dragLimit;
-
-    //Object References
-    private Transform Anchor;
-
-    //Effects
-    public GameObject Particle_Collision;
-    public AudioClip HitNoise;
-
-
-
-    //Component References
-    Rigidbody RB;
-    SphereCollider SC;
-    TrailRenderer Trail;
-    LineRenderer Tether;
-
-    //Used to track the state of the orb
+    #region Tracking variables
     public OrbState orbState;
     public enum OrbState
     {
@@ -40,13 +14,32 @@ public class PlayerOrb : ColouredObject
         Charging,
         Active
     }
-
-    //Trajectory Predictor
-    public TrajectoryPredictor TrajPred = new TrajectoryPredictor();
-
     #endregion
 
-    #region Mono Behaviour Events
+    #region Tweaking Variables
+    //Balance variables
+    [SerializeField] private float orbDragLerpSpeed;
+    [SerializeField] private float launchForceMultiplier;
+    //The radius around the orb that can be clicked to begin a drag
+    [SerializeField] private float dragRadius;
+    //The maximum distance the orb can travel from the anchor while being dragged
+    [SerializeField] private float dragLimit;
+    #endregion
+
+    #region Object References
+    private Transform Anchor;
+    public GameObject Particle_Collision;
+    public AudioClip HitNoise;
+    public TrajectoryPredictor TrajPred = new TrajectoryPredictor();
+    #endregion
+
+    #region Component References
+    Rigidbody RB;
+    SphereCollider SC;
+    TrailRenderer Trail;
+    LineRenderer Tether;
+    #endregion
+
     protected override void Awake()
     {
         //Run the parents Awake Function
@@ -58,17 +51,16 @@ public class PlayerOrb : ColouredObject
         Trail = GetComponent<TrailRenderer>();
         Tether = GetComponent<LineRenderer>();
 
+        //Initialize the trajectory predictor
         TrajPred.LoadTrajectoryPredictor(this);
     }
-    void Start()
-    {
 
-    }
     void Update()
     {
+        //Update the input states of the player
         UpdateInput();       
 
-        //If the player is draggign the object around, update orb position
+        //If the player is draggign the object around, update orb position and the trajectory
         if (orbState == OrbState.Charging)
         {
             //Track the position of the mouse
@@ -77,13 +69,18 @@ public class PlayerOrb : ColouredObject
             TrajPred.UpdateTrajectory(transform.position, DetermineLaunchForce());
         }
     }
+
     void LateUpdate()
     {
+        //Update the position and thickness of the tether (done in late update to keep shit smooth and in sync)
         UpdateTether();
     }
-    #endregion
 
-    //Initializes the Orb with spawn info from the level controller
+    /// <summary>
+    /// Initializes the Orb with spawn info from the level controller
+    /// </summary>
+    /// <param name="_Level"></param>
+    /// <param name="_Anchor"></param>
     public void Initialize(LevelController _Level, Transform _Anchor)
     {
         //Sets the anchors position from the level
@@ -98,7 +95,9 @@ public class PlayerOrb : ColouredObject
         UpdateColour();
     }
 
-    //Checks updates states
+    /// <summary>
+    /// Checks input states and changes orbstate based on input
+    /// </summary>
     void UpdateInput()
     {
         //If you click within range of the orb change to chargign state. And not over a button
@@ -110,7 +109,10 @@ public class PlayerOrb : ColouredObject
             LaunchOrb();
     }
 
-    //Changes the orbs state based on given parameter and Updates the state.
+    /// <summary>
+    /// Changes the orbs state based on given parameter and Updates the state.
+    /// </summary>
+    /// <param name="_orbState"></param>
     void ChangeState(OrbState _orbState)
     {
         //Changes the state to the state given
@@ -120,7 +122,9 @@ public class PlayerOrb : ColouredObject
         UpdateState();
     }
 
-    // Changes the properties of the orb based on its current state (Static, Charging, Active).
+    /// <summary>
+    /// Changes the properties of the orb based on its current state (Static, Charging, Active).
+    /// </summary>
     void UpdateState()
     {
         //Turns off all elements, so the switch statment can turn on the apprioriate ones
@@ -130,6 +134,7 @@ public class PlayerOrb : ColouredObject
         Trail.enabled = false;
         Trail.Clear();
 
+        //Turns on elements based on current state
         switch (orbState)
         {
             case OrbState.Static:
@@ -148,7 +153,9 @@ public class PlayerOrb : ColouredObject
         }
     }
 
-    // Changes the position of the orb to lerp towards the mouse position
+    /// <summary>
+    /// Changes the position of the orb to lerp towards the mouse position
+    /// </summary>
     void FollowMouse()
     {
         //Determine the target position of the Orb
@@ -164,7 +171,9 @@ public class PlayerOrb : ColouredObject
         transform.position = Vector3.Lerp(transform.position, targetPosition, orbDragLerpSpeed);
     }
 
-    // Launches the orb from the anchor 
+    /// <summary>
+    /// Launches the orb from the anchor 
+    /// </summary>
     void LaunchOrb()
     {
         //Change state to being active
@@ -177,23 +186,30 @@ public class PlayerOrb : ColouredObject
         GameDirector.LevelManager.CurrentLevel.OrbShot();
     }
 
+    /// <summary>
+    /// Determines the force that would be applied to the orb if it were to be released on this frame
+    /// </summary>
+    /// <returns></returns>
     Vector3 DetermineLaunchForce()
     {
         //Determine the direction and distance form the anchor
         return (Anchor.position - transform.position) * launchForceMultiplier;
     }
 
-    //Returns the percentage of distance dragged from the anchor based on max drag distance
+    /// <summary>
+    /// Returns the percentage of distance dragged from the anchor based on max drag distance
+    /// </summary>
     public float CurrentDragPercentage
     {
         get
         {
             return (transform.position - Anchor.position).magnitude / dragLimit;
-        }
-        
+        } 
     }
 
-    //Updates the trail and texture colour of the object based on the colour state
+    /// <summary>
+    /// Updates the trail and texture colour of the object based on the colour state
+    /// </summary>
     public override void UpdateColour()
     {
         //Does the base object update colour function
@@ -214,7 +230,9 @@ public class PlayerOrb : ColouredObject
         }
     }
 
-    //Updates the properties of the tether connecting the anchor and orb
+    /// <summary>
+    /// Updates the properties of the tether connecting the anchor and orb
+    /// </summary>
     void UpdateTether()
     {
         //Your Position
@@ -225,7 +243,10 @@ public class PlayerOrb : ColouredObject
         Tether.SetPosition(2, Anchor.position);
     }
 
-    //TODO code review this hack job
+    /// <summary>
+    /// TODO code review this hack job
+    /// </summary>
+    /// <param name="_Collision"></param>
     void OnCollisionEnter(Collision _Collision)
     {
         //TODO Debug testing for new scoring method
@@ -255,57 +276,42 @@ public class PlayerOrb : ColouredObject
 
         }
     }
-
-    void OnDrawGizmos()
-    {
-        if (orbState == OrbState.Charging)
-        {
-            //Vector3[] points = Curver.MakeSmoothCurve(TrajPred.GetTrajectoryLocations(), 3f);
-
-            Vector3[] points = TrajPred.GetTrajectoryLocations();
-
-            bool ptset = false;
-            Vector3 lastpt = Vector3.zero;
-            for (int j = 0; j < points.Length; j++)
-            {
-                Vector3 wayPoint = points[j];
-                if (ptset)
-                {
-                    //Gizmos.color = new Color(0, 0, 1, 0.5f);
-                    //Gizmos.DrawLine(lastpt, wayPoint);
-                    Debug.DrawLine(lastpt, wayPoint);
-                }
-                lastpt = wayPoint;
-                ptset = true;
-            }
-        }
-    }
 }
 
 [Serializable]
 public class TrajectoryPredictor
 {
+    #region Tracking variables
+    public List<GameObject> TrajectoryNodeList = new List<GameObject>();
+    float TrajectoryFadeInTimer;
+    Gradient BaseGradient;
+    #endregion
 
-    PlayerOrb PlayerOrb;
+    #region Tweaking Variables
     public int TrajectoryNodes;
     public float DistanceBetweenNodes;
     public float DistanceOfFirstNode;
+    public float TrajectoryFadeInTime;
+    public float MaxLineThickness;
+    public float MinLineThickness;
+    public float VelocityAdjustment; //0.01985 FOR SOME REASON!!!!
+    #endregion
 
+    #region Object References
+    PlayerOrb PlayerOrb;
     public GameObject TrajectoryLinePrefab;
     GameObject TrajectoryLine;
     public GameObject TrajectoryOrb;
-    public List<GameObject> TrajectoryNodeList = new List<GameObject>();
+    #endregion
+
+    #region Component References
     LineRenderer LR;
-    public float TrajectoryFadeInTime;
-    float TrajectoryFadeInTimer;
-    Gradient BaseGradient;
+    #endregion
 
-    //The max thickness of the trajectory line
-    public float MaxLineThickness;
-    public float MinLineThickness;
-
-    public float VelocityAdjustment; //0.01985 FOR SOME REASON!!!!
-
+    /// <summary>
+    /// Initializes all the objects and variables required to display the trajectory of the given orb
+    /// </summary>
+    /// <param name="_PlayerOrb"></param>
     public void LoadTrajectoryPredictor(PlayerOrb _PlayerOrb)
     {
         #region Set up Trail Container
@@ -329,6 +335,10 @@ public class TrajectoryPredictor
         PopulateTrajectoryPredictor(TrajectoryNodes);
     }
 
+    /// <summary>
+    /// Extracts the positoins from each of the nodes to be used in the line renderer TODO needs updating to not need objects
+    /// </summary>
+    /// <returns></returns>
     public Vector3[] GetTrajectoryLocations()
     {
         Vector3[] PositionList = new Vector3[TrajectoryNodes];
@@ -341,6 +351,10 @@ public class TrajectoryPredictor
         return PositionList;
     }
 
+    /// <summary>
+    /// Creates and lists all the node objects required to predict the trajectory
+    /// </summary>
+    /// <param name="_Steps"></param>
     public void PopulateTrajectoryPredictor(int _Steps)
     {
         for (int i = 0; i < _Steps; i++)
@@ -353,6 +367,11 @@ public class TrajectoryPredictor
         }
     }
 
+    /// <summary>
+    /// Alter the position of the nodes based on the current position and velocity the orb will be shot
+    /// </summary>
+    /// <param name="pStartPosition"></param>
+    /// <param name="pVelocity"></param>
     public void UpdateTrajectory(Vector3 pStartPosition, Vector3 pVelocity)
     {
         #region Determine Node Positions
@@ -421,20 +440,27 @@ public class TrajectoryPredictor
         #endregion
     }
 
+    /// <summary>
+    /// Turns on the trajectoy line object
+    /// </summary>
     public void ShowTrajectory()
     {
         TrajectoryLine.SetActive(true);
     }
 
+    /// <summary>
+    /// Turns off the trajectoy line object
+    /// </summary>
     public void HideTrajectory()
     {
         TrajectoryLine.SetActive(false);
     }
 
+    /// <summary>
+    /// Destroys the trajectoy line object
+    /// </summary>
     public void DestroyTrajectory()
     {
         GameObject.Destroy(TrajectoryLine);
     }
-
-    
 }

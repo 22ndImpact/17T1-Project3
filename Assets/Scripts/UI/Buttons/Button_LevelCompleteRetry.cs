@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class Button_LevelCompleteRetry : MonoBehaviour
 {
+    /// <summary>
+    /// reload the current level, not do-able while in menu transition
+    /// </summary>
     public void LoadLevel()
     {
         //Dont allow restarting during end level transitions
@@ -14,7 +17,7 @@ public class Button_LevelCompleteRetry : MonoBehaviour
         }
         
 
-        //Only trigger the transition if the end game menu is fully up
+        //Trigger the transition if the end game menu is fully up
         if(GameDirector.LevelManager.levelUIController.MenuUp)
         {
             GameDirector.LevelManager.levelUIController.StartLevelOpeningTransition();

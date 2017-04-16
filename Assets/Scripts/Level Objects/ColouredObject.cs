@@ -4,21 +4,14 @@ using UnityEngine;
 
 public class ColouredObject : MonoBehaviour
 {
-    //Component References
-    MeshRenderer MR;
-
-
-    //Colour Materials
+    #region Tweaing Variables
     public Material mat_Neutural;
     public Gradient gra_Neutural;
     public Material mat_AltOne;
     public Gradient gra_AltOne;
     public Material mat_AltTwo;
     public Gradient gra_AltTwo;
-
-    //State Variables
     public ObjectColour objectColour;
-
     public enum ObjectColour
     {
         Neutural,
@@ -26,6 +19,11 @@ public class ColouredObject : MonoBehaviour
         AltTwo,
         OrbColourCount
     }
+    #endregion
+
+    #region Component References
+    MeshRenderer MR;
+    #endregion
 
     protected virtual void Awake()
     {
@@ -33,14 +31,19 @@ public class ColouredObject : MonoBehaviour
         MR = GetComponent<MeshRenderer>();
     }
 
-    //Changes the colour to the one given then updates the colour state
+    /// <summary>
+    /// Changes the colour to the one given then updates the colour state
+    /// </summary>
+    /// <param name="_ObjectColour"></param>
     public void ChangeColour(ObjectColour _ObjectColour)
     {
         objectColour = _ObjectColour;
         UpdateColour();
     }
 
-    //Updates the trail and texture colour of the object based on the colour state
+    /// <summary>
+    /// Updates the trail and texture colour of the object based on the colour state
+    /// </summary>
     public virtual void UpdateColour()
     {
         switch (objectColour)

@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class LevelSelectButtons : MonoBehaviour
 {
-	// Use this for initialization
 	void Start ()
     {
         //Scans for all the buttons and adds them to the gameDirectors list

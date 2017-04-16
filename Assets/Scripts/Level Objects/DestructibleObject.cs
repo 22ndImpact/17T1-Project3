@@ -4,16 +4,31 @@ using UnityEngine;
 
 public class DestructibleObject : ColouredObject
 {
+    #region Tweaking Variables
     public float FadeTime;
     public float yPositionBoundary;
-    bool Fading = false;
+    #endregion
 
+    #region Tracking Variables
+    bool Fading = false;
+    #endregion
+
+    #region Component References
     public AudioClip DeathNoise;
+    #endregion
 
     void Update()
     {
+        CheckIfBelowBoundary();
+    }
+
+    /// <summary>
+    /// Checks if the block is below the yBoundary set and destroys it if it is
+    /// </summary>
+    void CheckIfBelowBoundary()
+    {
         //Checks if the block is not lower than a certain cut off point, and if it is, Fade/Destroy it
-        if(gameObject.transform.position.y <= yPositionBoundary)
+        if (gameObject.transform.position.y <= yPositionBoundary)
         {
             //Check if your not already dead
             if (!Fading)
@@ -43,8 +58,6 @@ public class DestructibleObject : ColouredObject
                     //Activte the fade
                     StartCoroutine(FadeOutDestroy());
                 }
-                //TODO Trigger the object fade to desctuction
-                //TODO when the level ends, slow-mo into fad out
             }
         }
     }
@@ -79,10 +92,6 @@ public class DestructibleObject : ColouredObject
 
             yield return null;
         }
-
         Destroy(this.gameObject);
-        //Destroy the object and let the game director know
-
-
     }
 }
