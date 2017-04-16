@@ -8,5 +8,11 @@ public class Button_InGameLevelSelect : MonoBehaviour
     {
         //Activate the level select
         GameDirector.menuController.ActivateLevelSelect();
+
+        //Only trigger the transition if the end game menu is fully up
+        if (GameDirector.LevelManager.levelUIController.MenuUp)
+        {
+            GameDirector.LevelManager.levelUIController.StartLevelOpeningTransition();
+        }
     }
 }

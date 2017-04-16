@@ -10,7 +10,7 @@ public class Button_LevelCompleteRetry : MonoBehaviour
         if(!GameDirector.LevelManager.levelUIController.TransitioningIn && !GameDirector.LevelManager.levelUIController.TransitioningOut)
         {
             GameDirector.LevelManager.UnloadLevel(GameDirector.LevelManager.CurrentLevelID);
-            GameDirector.LevelManager.LoadLevelAdditive(GameDirector.LevelManager.CurrentLevelID);
+            GameDirector.LevelManager.LoadLevel(GameDirector.LevelManager.CurrentLevelID);
         }
         
 

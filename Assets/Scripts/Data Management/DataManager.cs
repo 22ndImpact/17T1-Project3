@@ -8,6 +8,9 @@ using System.IO;
 [Serializable]
 public class DataManager
 {
+    /// <summary>
+    /// Returns if a save file at the designated path exists
+    /// </summary>
     public bool SaveDataFound
     {
         get
@@ -16,6 +19,10 @@ public class DataManager
         }
     }
 
+    /// <summary>
+    /// Saves level data to an external file
+    /// </summary>
+    /// <param name="_LevelData"></param>
     public void SaveLevelData(List<LevelData> _LevelData)
     {
         //Create the serializer
@@ -26,10 +33,12 @@ public class DataManager
         serializer.Serialize(stream, _LevelData);
         //Closes the stream
         stream.Close();
-
-        Debug.Log("Saved level data to: " + Application.persistentDataPath);
     }
 
+    /// <summary>
+    /// Loads level data from an external file
+    /// </summary>
+    /// <returns></returns>
     public List<LevelData> LoadLevelData()
     {
         //Create the serializer

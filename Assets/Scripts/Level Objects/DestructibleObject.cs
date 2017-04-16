@@ -80,8 +80,6 @@ public class DestructibleObject : ColouredObject
             yield return null;
         }
 
-        Debug.Log("faded");
-
         Destroy(this.gameObject);
         //Destroy the object and let the game director know
 

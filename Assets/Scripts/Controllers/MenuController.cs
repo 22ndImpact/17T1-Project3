@@ -5,15 +5,20 @@ using UnityEngine.UI;
 
 public class MenuController : MonoBehaviour
 {
-    public RectTransform MenuPanel;
 
+    #region Tracking Variables
     public bool TransitioningMenu = false;
+    #endregion
 
-    public float MenuTransitionTime;
-  
+    #region Tweaking Variables
     public AnimationCurve MenuTransitionCurve;
+    public float MenuTransitionTime;
+    #endregion
 
-	// Use this for initialization
+    #region Object References
+    public RectTransform MenuPanel;
+    #endregion
+
 	void Awake ()
     {
         //Attaches the menu to the GameDirector
@@ -23,6 +28,8 @@ public class MenuController : MonoBehaviour
         GameDirector.LevelManager.PopulateLevelList();
     }
 
+    //used to activate and shift between different menu objects
+    #region Transition Functions
     public void ActivateMainMenu()
     {
         if(!TransitioningMenu)
@@ -31,7 +38,6 @@ public class MenuController : MonoBehaviour
         }
         
     }
-
     public void ActivateLevelSelect()
     {
         if(!TransitioningMenu)
@@ -42,7 +48,6 @@ public class MenuController : MonoBehaviour
             StartCoroutine(TransitionMenu(MenuPanel.localPosition, new Vector3(-1440, 0, 0)));
         }
     }
-
     public void ActivateGamePlay()
     {
         if(!TransitioningMenu)
@@ -50,11 +55,8 @@ public class MenuController : MonoBehaviour
             StartCoroutine(TransitionMenu(MenuPanel.localPosition, new Vector3(-1440, 2560, 0)));
         }
     }
-
     IEnumerator TransitionMenu(Vector3 _startingPosition, Vector3 _targetPosition)
     {
-        Debug.Log("StartingTransition");
-
         TransitioningMenu = true;
         MenuPanel.localPosition = _targetPosition;
 
@@ -62,7 +64,6 @@ public class MenuController : MonoBehaviour
 
         while (MenuTransitionTimer > 0)
         {
-            Debug.Log("TransitioningMenu");
             //Change position based on animation curve
             MenuPanel.localPosition = Vector3.Lerp(_startingPosition, _targetPosition, MenuTransitionCurve.Evaluate(MenuTransitionTimer / MenuTransitionTime));
 
@@ -77,4 +78,5 @@ public class MenuController : MonoBehaviour
 
         TransitioningMenu = false;
     }
+    #endregion
 }

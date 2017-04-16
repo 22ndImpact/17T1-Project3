@@ -5,39 +5,40 @@ using UnityEngine.UI;
 
 public class LevelUIController : MonoBehaviour
 {
-    //Tweaking Values
+    #region Tracking Variables
+    public float TransitionTimer;
+    public bool TransitioningOut = false;
+    public bool TransitioningIn = false;
+    public bool MenuUp = false;
+    public Vector3 UIStartingPosition;
+    #endregion
+
+    #region Tweaking Values
     float TransitionTime;
     public AnimationCurve TransitionOutCurve;
     public AnimationCurve TransitionInCurve;
+    #endregion
 
-    //Object references
+    #region Object References
     public GameObject GameUIPanel;
     public Button_LevelCompleteContinue LevelCompleteButton;
     public CompletionImage LevelCompletionImage;
     public CompletionText LevelCompletionText;
     public OrbCounter orbCounter;
-
-    //The top and bottom values of the end game panel at the start of the level
-    public Vector3 UIStartingPosition;
-
-    //Tracking Values
-    public float TransitionTimer;
-    public bool TransitioningOut = false;
-    public bool TransitioningIn = false;
-
-    public bool MenuUp = false;
+    #endregion
 
     void Awake()
     {
-        //Set this level ui to be level UI of the current level
+        //Link this level UI to the game director
         GameDirector.LevelManager.levelUIController = this;
     }
 
     void Start()
     {
-        //Getting the transition timer form the game director
+        //Getting the menu transition timer from the game director
         TransitionTime = GameDirector.menuController.MenuTransitionTime;
 
+        //Store the starting position of the menu
         UIStartingPosition = GameUIPanel.transform.localPosition;
     }
 
@@ -54,11 +55,14 @@ public class LevelUIController : MonoBehaviour
         }
     }
 
+    //An inelegent solution for transition the position of the menu panel up and down based on game state. Should be replace by unity animations or at least coroutines.
+    #region menu Transition Code
+    
+    /// <summary>
+    /// Triggered when finishing a level to make the menu slide upward
+    /// </summary>
     public void StartLevelClosingTransition()
     {
-        //Set the starting position
-        //-UIStartingPosition = GameUIPanel.transform.localPosition;
-
         TransitionTimer = TransitionTime;
         TransitioningOut = true;
 
@@ -67,11 +71,11 @@ public class LevelUIController : MonoBehaviour
         LevelCompletionText.UpdateState();
     }
 
+    /// <summary>
+    /// Triggered when leaving the end level menu to make it slide downward
+    /// </summary>
     public void StartLevelOpeningTransition()
     {
-        //Set the starting position
-        //UIStartingPosition = GameUIPanel.transform.localPosition;
-
         TransitionTimer = TransitionTime;
         TransitioningIn = true;
     }
@@ -95,9 +99,6 @@ public class LevelUIController : MonoBehaviour
         }
     }
 
-
-
-
     public void UpdateOpeningTransition()
     {
 
@@ -117,19 +118,24 @@ public class LevelUIController : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Used to instantly set the menu to the down position
+    /// </summary>
     public void SetMenuToDown()
     {
-        GameUIPanel.transform.localPosition = new Vector3(UIStartingPosition.x,
-                                                          UIStartingPosition.y,
-                                                          UIStartingPosition.z);
+        GameUIPanel.transform.localPosition = UIStartingPosition;
 
         MenuUp = false;
     }
 
+    /// <summary>
+    /// Used to instantly set the menu to the up position
+    /// </summary>
     public void SetMenuToUp()
     {
         GameUIPanel.transform.localPosition = Vector3.zero;
         MenuUp = true;
     }
 
+    #endregion
 }

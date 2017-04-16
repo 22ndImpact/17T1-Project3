@@ -65,6 +65,6 @@ public class Button_SelectLevel : MonoBehaviour
         
 
         //Loads the selected level
-        GameDirector.LevelManager.LoadLevelAdditive(LevelID);
+        GameDirector.LevelManager.LoadLevel(LevelID);
     }
 }

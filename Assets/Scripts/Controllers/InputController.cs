@@ -5,6 +5,7 @@ using UnityEngine.EventSystems;
 
 public static class InputController
 {
+    #region Basic Input States
     public static bool LeftMouseButtonDown
     {
         get
@@ -26,20 +27,29 @@ public static class InputController
             return Input.GetMouseButton(0);
         }
     }
+    #endregion
 
+    #region Complex Input States
+    /// <summary>
+    /// Returns true if the cursor is currently over a UI Element
+    /// </summary>
+    /// <returns></returns>
     public static bool IsPointerOverUIObject()
     {
         // Code utility from http://answers.unity3d.com/questions/1115464/ispointerovergameobject-not-working-with-touch-inp.html
-        // this works the same as the usual event systems "cursor on object" but also works with touch interfaces
+        // This works the same as the usual event systems "cursor on object" but also works with touch interfaces
         PointerEventData eventDataCurrentPosition = new PointerEventData(EventSystem.current);
         eventDataCurrentPosition.position = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
         List<RaycastResult> results = new List<RaycastResult>();
         EventSystem.current.RaycastAll(eventDataCurrentPosition, results);
         return results.Count > 0;
     }
-
-
-
+    /// <summary>
+    /// Returns true if the cursor is within the cube boundary
+    /// </summary>
+    /// <param name="_Point">The center point of the bounding box</param>
+    /// <param name="_Boundary">The distances in both + and - from the centerpoint in all directions that determines the bounding box</param>
+    /// <returns></returns>
     public static bool MouseOnPoint(Vector3 _Point, Vector3 _Boundary)
     {
         //Gets the mouse position on screen
@@ -56,6 +66,12 @@ public static class InputController
 
         return false;
     }
+    /// <summary>
+    /// returns true if the cursor is a certian range to the given point
+    /// </summary>
+    /// <param name="_Point"></param>
+    /// <param name="_Range"></param>
+    /// <returns></returns>
     public static bool MouseOnPoint(Vector3 _Point, float  _Range)
     {
         //Gets the mouse position on screen
@@ -70,4 +86,5 @@ public static class InputController
 
         return false;
     }
+    #endregion
 }

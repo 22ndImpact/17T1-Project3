@@ -2,16 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Particle_OrbCollision : MonoBehaviour {
-
-	// Use this for initialization
+public class Particle_OrbCollision : MonoBehaviour
+{
 	void Start ()
     {
+        //Just destorys the particle system after its duration has expired
         GameObject.Destroy(this.gameObject, GetComponent<ParticleSystem>().main.duration);	
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
 	}
 }

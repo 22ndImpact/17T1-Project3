@@ -28,7 +28,7 @@ public class Button_LevelCompleteContinue : MonoBehaviour
     public void LoadLevel()
     {
         GameDirector.LevelManager.UnloadLevel(GameDirector.LevelManager.CurrentLevelID);
-        GameDirector.LevelManager.LoadLevelAdditive(GameDirector.LevelManager.CurrentLevelID + 1);
+        GameDirector.LevelManager.LoadLevel(GameDirector.LevelManager.CurrentLevelID + 1);
 
         //Transition the new level In
         GameDirector.LevelManager.levelUIController.StartLevelOpeningTransition();

@@ -5,62 +5,53 @@ using UnityEngine.EventSystems;
 
 public class LevelController : MonoBehaviour
 {
-    //Object References
-    public LevelData levelData;
-    [SerializeField] private PrefabList PrefabList;
-    private Transform Anchor;
-    public LevelUIController levelUIController;
-    
-
+    #region Tracking Variables
     //Level Data Values
-    [SerializeField] private float reloadTime;
+    public float reloadTime;
     public string LevelName;
     public int LevelID;
     public int passScore;
     public int perfectScore;
     public int bestScore;
-
-    //Tracking Values
+    //Other tracking values
     public int orbsUsed;
     public float reloadTimer;
     public bool reloading;
     public int DestructibleObjectCount;
     public bool LevelOver;
+    #endregion
 
+    #region Tweaking Variables
     //The time it takes to end the level
     float EndOfLevelStall = 1f;
+    #endregion
 
-    #region Mono Behaviour Events
+    #region Object References
+    public LevelData levelData;
+    public PrefabList PrefabList;
+    private Transform Anchor;
+    #endregion
+
     void Awake()
     {
+        #region variable Initialization
         //Set the level over to false so the game doesnt think the previous level is still over
         LevelOver = false;
-
         //Resets the time scale back to 1, this is a fail safe incase of restarts during slow mo
         Time.timeScale = 1;
-
-        //Sets the current level based on scene name
-        GameDirector.LevelManager.CurrentLevelID = GameDirector.LevelManager.GetLevelIDFromScene(GameDirector.SceneManager.CurrenLevelSceneName);
-
-        //Attempts to populate the level list
-        GameDirector.LevelManager.PopulateLevelList();
-
-        //Updates the level manager that this level is the current one
-        GameDirector.LevelManager.CurrentLevel = this;
-
         //Takes the values form the scriptable object and applies them to the level
         InitializeFromLevelData();
-
         //Finds all the relevent object in the level
         FindObjects();
-
-        //Attempt to find the level UI
-        if(GameObject.FindGameObjectWithTag("LevelUI") != null)
-        {
-            levelUIController = GameObject.FindGameObjectWithTag("LevelUI").GetComponent<LevelUIController>();
-        }
-
-        
+        #endregion
+        #region External Object Initialization
+        //Sets the current level based on scene name
+        GameDirector.LevelManager.CurrentLevelID = GameDirector.LevelManager.GetLevelIDFromScene(GameDirector.SceneManager.CurrentLevelSceneName);
+        //Attempts to populate the level list
+        GameDirector.LevelManager.PopulateLevelList();
+        //Updates the level manager that this level is the current one
+        GameDirector.LevelManager.CurrentLevel = this;
+        #endregion
     }
 	void Start ()
     {
@@ -72,7 +63,7 @@ public class LevelController : MonoBehaviour
     }
 	void Update ()
     {
-        //updates the reload input check if reloading.
+        //Updates the reload input check if reloading.
         if(reloading)
         {
             CheckForReload();
@@ -81,26 +72,25 @@ public class LevelController : MonoBehaviour
         //Updates the ui progress bar, while in a level
         GameDirector.LevelManager.levelUIController.orbCounter.UpdateProgressBars();
     }
-    #endregion
 
-    public void StopLevel()
-    {
-
-    }
-
-    //Triggered by the orb when it fires
+    /// <summary>
+    /// Placeholder for an event system trigger for when an orb is shot in game
+    /// </summary>
     public void OrbShot()
     {
         //Start the reload process
         reloading = true;
     }
 
-    //TODO Make event system
+    /// <summary>
+    /// Alters the current levels OrbsUsed variable to track progress, also triggers end of game if the orbs used reaches 0.
+    /// </summary>
+    /// <param name="_OrbsUsed"></param>
     public void AdjustOrbsUsed(int _OrbsUsed)
     {
         orbsUsed += _OrbsUsed;
 
-
+        //If the orbs used reaches the allowed amount end the game
         if(orbsUsed >= passScore)
         {
             if (LevelOver == false)
@@ -108,8 +98,10 @@ public class LevelController : MonoBehaviour
         }
     }
 
-    //TODO make event system 
-    //Triggered when any destructible object is destroyed
+    /// <summary>
+    /// Placeholder for an event system: Triggered when any destructible object is destroyed
+    /// </summary>
+    /// <param name="_NumObjects"></param>
     public void ObjectsDestroyed(int _NumObjects)
     {
         //Reduce the remaining amount of Destroyable objects by 1
@@ -123,23 +115,29 @@ public class LevelController : MonoBehaviour
         }
     }
 
-    //Check for player inpotu to spawn an orb
+    /// <summary>
+    /// Checks for player inpot to spawn a new orb
+    /// </summary>
     void CheckForReload()
     {
         if(InputController.LeftMouseButtonDown && !InputController.IsPointerOverUIObject())
         {
             //Updates the used orbs by 1
             AdjustOrbsUsed(1);
+            //Spawns the orb
             SpawnOrb();
+            //Sets reloading to false
             reloading = false;
         }
     }
 
-    //Copies info from the external level data object
+    /// <summary>
+    /// Loads info from an external level data object
+    /// </summary>
     void InitializeFromLevelData()
     {
         //Debug line that gets the level ID from the scene name itself instead of the level manager. This is so the level can run before the "Levelload" fucntion has been called
-        levelData = GameDirector.LevelManager.GetLevelData(GameDirector.LevelManager.GetLevelIDFromScene(GameDirector.SceneManager.CurrenLevelSceneName));
+        levelData = GameDirector.LevelManager.GetLevelData(GameDirector.LevelManager.GetLevelIDFromScene(GameDirector.SceneManager.CurrentLevelSceneName));
         //levelData = GameDirector.LevelManager.GetLevelData(GameDirector.LevelManager.CurrentLevelID);
 
         LevelName = levelData.LevelName;
@@ -149,7 +147,9 @@ public class LevelController : MonoBehaviour
         bestScore = levelData.BestScore;
     }
 
-    //Creats an orb at the anchor
+    /// <summary>
+    /// Creats an orb at the anchor
+    /// </summary>
     void SpawnOrb()
     {
         //Creating a new orb from the GameResources object
@@ -158,15 +158,19 @@ public class LevelController : MonoBehaviour
         newOrb.GetComponent<PlayerOrb>().Initialize(this, Anchor);
     }
 
-    //Finds all the relevent objects in the current scene
+    /// <summary>
+    /// Finds all the relevent objects in the current scene
+    /// </summary>
     void FindObjects()
     {
-        Anchor = ObjectFinder.Anchor;
+        Anchor = GameObject.FindGameObjectWithTag("Anchor").transform;
         DestructibleObjectCount = GameObject.FindGameObjectsWithTag("Destructible").Length;
-        levelUIController = ObjectFinder.levelUIController;
     }
 
-    //Triggered when the player has destroyed all the objects
+    /// <summary>
+    /// Placeholder for event system: Triggered when the player has destroyed all the objects
+    /// </summary>
+    /// <returns></returns>
     IEnumerator EndLevel()
     {
         LevelOver = true;
@@ -198,11 +202,13 @@ public class LevelController : MonoBehaviour
         #endregion
     }
 
-    //Saves the level data to the external save file
+    /// <summary>
+    /// Saves the level data to the external save file
+    /// </summary>
     public void SaveLevelData()
     {
         //Debug line that gets the level ID from the scene name itself instead of the level manager. This is so the level can run before the "Levelload" fucntion has been called
-        levelData = GameDirector.LevelManager.GetLevelData(GameDirector.LevelManager.GetLevelIDFromScene(GameDirector.SceneManager.CurrenLevelSceneName));
+        levelData = GameDirector.LevelManager.GetLevelData(GameDirector.LevelManager.GetLevelIDFromScene(GameDirector.SceneManager.CurrentLevelSceneName));
 
         //Locating level data object in global list
         //levelData = GameDirector.LevelManager.GetLevelData(GameDirector.LevelManager.CurrentLevelID);
@@ -214,7 +220,9 @@ public class LevelController : MonoBehaviour
         GameDirector.LevelManager.SaveLevelData();
     }
 
-    //Checks current orbs used towards the best score
+    /// <summary>
+    /// Checks current orbs used towards the best score
+    /// </summary>
     public void UpdateBestScore()
     {
         //Updating best score if it is better
@@ -226,16 +234,15 @@ public class LevelController : MonoBehaviour
         //Check if the level is completed, and is so unlock the next one
         if(bestScore < passScore)
         {
-            Debug.Log("unlock next level");
-            UnlockNextLevel();
+            //Unloacks the next level
+            GameDirector.LevelManager.GetLevelData(GameDirector.LevelManager.CurrentLevelID + 1).Unlocked = true;
         }
     }
-
-    public void UnlockNextLevel()
-    {
-        GameDirector.LevelManager.GetLevelData(GameDirector.LevelManager.CurrentLevelID + 1).Unlocked = true;
-    }
-
+    
+    /// <summary>
+    /// Placeholder for audio system: Plays an audio clip
+    /// </summary>
+    /// <param name="_clip"></param>
     public void PlaySound(AudioClip _clip)
     {
         GetComponent<AudioSource>().PlayOneShot(_clip);
