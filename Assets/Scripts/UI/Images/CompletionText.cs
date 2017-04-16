@@ -9,6 +9,10 @@ public class CompletionText : MonoBehaviour
     public string TextFail;
     public string TextPass;
     public string TextPerfect;
+
+    public Color ColourFail;
+    public Color ColourPass;
+    public Color ColourPerfect;
     #endregion
 
     #region Component References
@@ -24,14 +28,17 @@ public class CompletionText : MonoBehaviour
         if (GameDirector.LevelManager.CurrentLevel.orbsUsed < GameDirector.LevelManager.CurrentLevel.perfectScore)
         {
             text.text = TextPerfect;
+            text.color = ColourPerfect;
         }
         else if (GameDirector.LevelManager.CurrentLevel.orbsUsed < GameDirector.LevelManager.CurrentLevel.passScore)
         {
             text.text = TextPass;
+            text.color = ColourPass;
         }
         else
         {
             text.text = TextFail;
+            text.color = ColourFail;
         }
     }
 }
