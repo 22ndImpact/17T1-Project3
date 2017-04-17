@@ -14,6 +14,7 @@ public class PlayerOrb : ColouredObject
         Charging,
         Active
     }
+    public bool alive;
     #endregion
 
     #region Tweaking Variables
@@ -45,6 +46,8 @@ public class PlayerOrb : ColouredObject
     {
         //Run the parents Awake Function
         base.Awake();
+
+        alive = true;
 
         //Componenet Referencing
         RB = GetComponent<Rigidbody>();
@@ -289,17 +292,15 @@ public class PlayerOrb : ColouredObject
     void CheckIfBelowBoundary()
     {
         //Checks if the block is not lower than a certain cut off point, and if it is, Fade/Destroy it
-        if (gameObject.transform.position.y <= yPositionBoundary)
+        if (gameObject.transform.position.y <= yPositionBoundary && alive)
         {
+            alive = false;
+            //Take away an active orb
+            GameDirector.LevelManager.CurrentLevel.ActiveOrbs -= 1;
             //Destroy the orb
-            Destroy(this.gameObject);
-        }
-    }
+            Destroy(this.gameObject, 5);
 
-    void OnDestroy()
-    {
-        //Take away an active orb
-        GameDirector.LevelManager.CurrentLevel.ActiveOrbs -= 1;
+        }
     }
 }
 
