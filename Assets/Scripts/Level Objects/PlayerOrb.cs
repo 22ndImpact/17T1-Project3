@@ -34,7 +34,6 @@ public class PlayerOrb : ColouredObject
     #endregion
 
     #region Component References
-    Rigidbody RB;
     SphereCollider SC;
     TrailRenderer Trail;
     LineRenderer Tether;
@@ -143,6 +142,7 @@ public class PlayerOrb : ColouredObject
             case OrbState.Charging:
                 Tether.enabled = true;
                 TrajPred.ShowTrajectory();
+                Anchor.GetComponent<Anchor>().TurnOff();
                 break;
             case OrbState.Active:
                 RB.useGravity = true;

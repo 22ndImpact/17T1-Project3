@@ -21,11 +21,11 @@ public class CompletionImage : MonoBehaviour
     public void UpdateState()
     {
         //Sets the colour of the background image based on current score
-        if(GameDirector.LevelManager.CurrentLevel.orbsUsed < GameDirector.LevelManager.CurrentLevel.perfectScore)
+        if(GameDirector.LevelManager.CurrentLevel.orbsUsed <= GameDirector.LevelManager.CurrentLevel.perfectScore)
         {
             image.color = ColourPerfect;
         }
-        else if(GameDirector.LevelManager.CurrentLevel.orbsUsed < GameDirector.LevelManager.CurrentLevel.passScore)
+        else if(GameDirector.LevelManager.CurrentLevel.orbsUsed <= GameDirector.LevelManager.CurrentLevel.passScore)
         {
             image.color = ColourPass;
         }

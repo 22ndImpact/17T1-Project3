@@ -11,6 +11,7 @@ public class DestructibleObject : ColouredObject
 
     #region Tracking Variables
     bool Fading = false;
+    public bool Active = true;
     #endregion
 
     #region Component References
@@ -47,10 +48,10 @@ public class DestructibleObject : ColouredObject
     void OnCollisionEnter(Collision _collision)
     {
         //If it collides with another coloured object
-        if(_collision.gameObject.GetComponent<ColouredObject>() != null)
+        if (_collision.gameObject.GetComponent<ColouredObject>() != null)
         {
             //If they are the same colour
-            if(_collision.gameObject.GetComponent<ColouredObject>().objectColour == objectColour)
+            if (_collision.gameObject.GetComponent<ColouredObject>().objectColour == objectColour)
             {
                 //Trigger the object fade
                 if (!Fading)

@@ -22,13 +22,15 @@ public class ColouredObject : MonoBehaviour
     #endregion
 
     #region Component References
-    MeshRenderer MR;
+    public MeshRenderer MR;
+    public Rigidbody RB;
     #endregion
 
     protected virtual void Awake()
     {
         //Componenet Referencing
         MR = GetComponent<MeshRenderer>();
+        RB = GetComponent<Rigidbody>();
     }
 
     /// <summary>

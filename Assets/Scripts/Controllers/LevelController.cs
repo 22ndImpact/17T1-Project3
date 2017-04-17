@@ -78,8 +78,10 @@ public class LevelController : MonoBehaviour
     /// </summary>
     public void OrbShot()
     {
+        //Updates the used orbs by 1
+        AdjustOrbsUsed(1);
         //Start the reload process
-        reloading = true;
+        Reload();
     }
 
     /// <summary>
@@ -89,13 +91,6 @@ public class LevelController : MonoBehaviour
     public void AdjustOrbsUsed(int _OrbsUsed)
     {
         orbsUsed += _OrbsUsed;
-
-        //If the orbs used reaches the allowed amount end the game
-        if(orbsUsed >= passScore)
-        {
-            if (LevelOver == false)
-                StartCoroutine(EndLevel());
-        }
     }
 
     /// <summary>
@@ -116,14 +111,26 @@ public class LevelController : MonoBehaviour
     }
 
     /// <summary>
+    /// Starts the reloading process
+    /// </summary>
+    void Reload()
+    {
+        if(orbsUsed < passScore)
+        {
+            //Set reloading to true for the CheckForReload
+            reloading = true;
+            //Spawn the (Realod Prieview)
+            Anchor.GetComponent<Anchor>().StartCoroutine(Anchor.GetComponent<Anchor>().FadeIn());
+        }
+    }
+
+    /// <summary>
     /// Checks for player inpot to spawn a new orb
     /// </summary>
     void CheckForReload()
     {
         if(InputController.LeftMouseButtonDown && !InputController.IsPointerOverUIObject())
         {
-            //Updates the used orbs by 1
-            AdjustOrbsUsed(1);
             //Spawns the orb
             SpawnOrb();
             //Sets reloading to false
@@ -232,7 +239,7 @@ public class LevelController : MonoBehaviour
         }
 
         //Check if the level is completed, and is so unlock the next one
-        if(bestScore < passScore)
+        if(bestScore <= passScore)
         {
             //Unloacks the next level
             GameDirector.LevelManager.GetLevelData(GameDirector.LevelManager.CurrentLevelID + 1).Unlocked = true;

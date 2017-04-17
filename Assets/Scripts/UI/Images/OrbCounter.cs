@@ -72,6 +72,13 @@ public class OrbCounter : MonoBehaviour
 
             newNotch.GetComponent<RectTransform>().localPosition = new Vector3(XPosition, 0, 0);
 
+            //Update notch state
+            if(i == PerfectScore)
+            {
+                newNotch.GetComponent<Image>().color = ColourPerfect;
+                newNotch.GetComponent<RectTransform>().localScale = newNotch.GetComponent<RectTransform>().localScale * 1.2f;
+            }
+
             NotchList.Add(newNotch);
         }
     }
@@ -90,7 +97,7 @@ public class OrbCounter : MonoBehaviour
         TrackerTargetPosition.x = CompletionBar.GetComponent<RectTransform>().localPosition.x + (CompletionBar.GetComponent<RectTransform>().rect.width * CompletionBar.GetComponent<RectTransform>().localScale.x);
         //Adjustng the position to be in the middle of the block, not above a notch
 
-        TrackerTargetPosition.x += Notches.rect.width * ((1 / (float)GameDirector.LevelManager.CurrentLevel.passScore)) / 2;
+        //TrackerTargetPosition.x += Notches.rect.width * ((1 / (float)GameDirector.LevelManager.CurrentLevel.passScore)) / 2;
 
         //Follow lerped target
         TrackerIcon.GetComponent<RectTransform>().localPosition = TrackerTargetPosition;
@@ -103,11 +110,11 @@ public class OrbCounter : MonoBehaviour
     /// </summary>
     void UpdateColour()
     {
-        if(GameDirector.LevelManager.CurrentLevel.orbsUsed < GameDirector.LevelManager.CurrentLevel.perfectScore)
+        if (GameDirector.LevelManager.CurrentLevel.orbsUsed <= GameDirector.LevelManager.CurrentLevel.perfectScore)
         {
             TrackerIcon.GetComponent<Image>().color = ColourPerfect;
         }
-        else if(GameDirector.LevelManager.CurrentLevel.orbsUsed < GameDirector.LevelManager.CurrentLevel.passScore)
+        else if (GameDirector.LevelManager.CurrentLevel.orbsUsed <= GameDirector.LevelManager.CurrentLevel.passScore)
         {
             TrackerIcon.GetComponent<Image>().color = ColourPass;
         }
