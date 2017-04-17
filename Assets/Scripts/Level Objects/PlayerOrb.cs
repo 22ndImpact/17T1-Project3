@@ -291,12 +291,15 @@ public class PlayerOrb : ColouredObject
         //Checks if the block is not lower than a certain cut off point, and if it is, Fade/Destroy it
         if (gameObject.transform.position.y <= yPositionBoundary)
         {
-            //Take away an active orb
-            GameDirector.LevelManager.CurrentLevel.ActiveOrbs -= 1;
-
             //Destroy the orb
             Destroy(this.gameObject);
         }
+    }
+
+    void OnDestroy()
+    {
+        //Take away an active orb
+        GameDirector.LevelManager.CurrentLevel.ActiveOrbs -= 1;
     }
 }
 
