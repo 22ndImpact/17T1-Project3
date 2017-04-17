@@ -68,7 +68,7 @@ public class GD_LevelManager
     public LevelController CurrentLevel;
     public LevelUIController levelUIController;
     //List of persistant level data that is used by the level selector and updated by indervidual level controllers
-    List<LevelData> LevelDataList = new List<LevelData>();
+    public List<LevelData> LevelDataList = new List<LevelData>();
     #endregion
 
     /// <summary>

@@ -245,10 +245,14 @@ public class LevelController : MonoBehaviour
         }
 
         //Check if the level is completed, and is so unlock the next one
-        if(bestScore <= passScore)
+        if(bestScore <= passScore && GameDirector.LevelManager.CurrentLevelID != GameDirector.LevelManager.LevelDataList.Count)
         {
             //Unloacks the next level
             GameDirector.LevelManager.GetLevelData(GameDirector.LevelManager.CurrentLevelID + 1).Unlocked = true;
+        }
+        else
+        {
+            //Something to do with changign the button
         }
     }
     
