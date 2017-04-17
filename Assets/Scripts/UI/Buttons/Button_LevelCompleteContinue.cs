@@ -42,6 +42,7 @@ public class Button_LevelCompleteContinue : MonoBehaviour
     /// </summary>
     public void LoadLevel()
     {
+        //If you are on the last level
         if (GameDirector.LevelManager.CurrentLevelID == GameDirector.LevelManager.LevelDataList.Count)
         {
             //Activate the level select
@@ -53,6 +54,7 @@ public class Button_LevelCompleteContinue : MonoBehaviour
                 GameDirector.LevelManager.levelUIController.StartLevelOpeningTransition();
             }
         }
+        //If you are not on the last level
         else
         {
             GameDirector.LevelManager.UnloadLevel(GameDirector.LevelManager.CurrentLevelID);
