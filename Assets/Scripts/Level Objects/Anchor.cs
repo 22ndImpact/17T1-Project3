@@ -18,6 +18,22 @@ public class Anchor : MonoBehaviour {
         startingAlpha = GetComponent<MeshRenderer>().material.color.a;
     }
 
+    void Update()
+    {
+        ForceDisable();
+    }
+
+    /// <summary>
+    /// This is implemeneted as a lazy cover all for a bug where the anchor would not dissappear after rapid firing of orbs
+    /// </summary>
+    void ForceDisable()
+    {
+        if(GameDirector.LevelManager.CurrentLevel.orbsUsed >= GameDirector.LevelManager.CurrentLevel.passScore)
+        {
+            TurnOff();
+        }
+    }
+
     public void TurnOff()
     {
         //Store a temp colour to allow us to modify only the alpha

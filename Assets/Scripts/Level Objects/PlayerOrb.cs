@@ -24,6 +24,8 @@ public class PlayerOrb : ColouredObject
     [SerializeField] private float dragRadius;
     //The maximum distance the orb can travel from the anchor while being dragged
     [SerializeField] private float dragLimit;
+    //The y position that the orb destorys itself when goes below
+    public float yPositionBoundary;
     #endregion
 
     #region Object References
@@ -67,6 +69,10 @@ public class PlayerOrb : ColouredObject
             //Update the trajectory nodes
             TrajPred.UpdateTrajectory(transform.position, DetermineLaunchForce());
         }
+
+
+        //check position of orb to destroy it
+        CheckIfBelowBoundary();
     }
 
     void LateUpdate()
@@ -274,6 +280,22 @@ public class PlayerOrb : ColouredObject
             //Activate sound
             GameDirector.LevelManager.CurrentLevel.PlaySound(HitNoise);
 
+        }
+    }
+
+    /// <summary>
+    /// checks if the player orb is below the specific boundary, and destorys it if it is
+    /// </summary>
+    void CheckIfBelowBoundary()
+    {
+        //Checks if the block is not lower than a certain cut off point, and if it is, Fade/Destroy it
+        if (gameObject.transform.position.y <= yPositionBoundary)
+        {
+            //Take away an active orb
+            GameDirector.LevelManager.CurrentLevel.ActiveOrbs -= 1;
+
+            //Destroy the orb
+            Destroy(this.gameObject);
         }
     }
 }

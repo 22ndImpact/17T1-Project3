@@ -19,6 +19,7 @@ public class LevelController : MonoBehaviour
     public bool reloading;
     public int DestructibleObjectCount;
     public bool LevelOver;
+    public int ActiveOrbs;
     #endregion
 
     #region Tweaking Variables
@@ -71,6 +72,9 @@ public class LevelController : MonoBehaviour
 
         //Updates the ui progress bar, while in a level
         GameDirector.LevelManager.levelUIController.orbCounter.UpdateProgressBars();
+
+        //Checks to see if the level should be eded due to lack of orbs
+        CheckForNoOrbs();
     }
 
     /// <summary>
@@ -78,6 +82,8 @@ public class LevelController : MonoBehaviour
     /// </summary>
     public void OrbShot()
     {
+        //Increase the amount of active orbs in the level
+        ActiveOrbs += 1;
         //Updates the used orbs by 1
         AdjustOrbsUsed(1);
         //Start the reload process
@@ -255,6 +261,16 @@ public class LevelController : MonoBehaviour
         GetComponent<AudioSource>().PlayOneShot(_clip);
     }
 
+    public void CheckForNoOrbs()
+    {
+        //If there are no more orbs to shoot and none on the map
+        if(orbsUsed >= passScore && ActiveOrbs == 0)
+        {
+            //End the game
+            AdjustOrbsUsed(99);
+            ObjectsDestroyed(99);
+        }
+    }
 }
 
 
