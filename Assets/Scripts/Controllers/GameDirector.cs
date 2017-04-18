@@ -14,6 +14,7 @@ public static class GameDirector
     public static GD_SceneManager SceneManager = new GD_SceneManager();
     public static GD_LevelManager LevelManager = new GD_LevelManager();
     public static DataManager dataManager = new DataManager();
+    public static AudioController audioController;
     #endregion
 }
 public class GD_SceneManager

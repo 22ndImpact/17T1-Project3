@@ -281,8 +281,7 @@ public class PlayerOrb : ColouredObject
             newParticleEmitter.transform.rotation *= Quaternion.FromToRotation(Vector3.up, _Collision.contacts[0].normal);
 
             //Activate sound
-            GameDirector.LevelManager.CurrentLevel.PlaySound(HitNoise);
-
+            GameDirector.audioController.PlayEffectPitchLoop(GameDirector.audioController.AudioCollection.OrbHit);
         }
     }
 

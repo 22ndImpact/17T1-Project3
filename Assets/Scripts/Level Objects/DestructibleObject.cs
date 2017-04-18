@@ -66,7 +66,7 @@ public class DestructibleObject : ColouredObject
     IEnumerator FadeOutDestroy()
     {
         //Activate sound
-        GameDirector.LevelManager.CurrentLevel.PlaySound(DeathNoise);
+        GameDirector.audioController.PlayEffectClip(GameDirector.audioController.AudioCollection.DestructibleObjectDeath);
 
         //Set to fading, to stop double death situations
         Fading = true;

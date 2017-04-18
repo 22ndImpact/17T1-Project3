@@ -56,6 +56,9 @@ public class LevelController : MonoBehaviour
     }
 	void Start ()
     {
+        //Resets the pitch of the pitch loop audio source
+        GameDirector.audioController.ResetPitchLoop();
+
         //Spawns the starting orb at the start of the level
         SpawnOrb();
 
@@ -188,6 +191,9 @@ public class LevelController : MonoBehaviour
     {
         LevelOver = true;
 
+        //Play level end sound
+        GameDirector.audioController.PlayEffectClip(GameDirector.audioController.AudioCollection.DestructibleObjectDeath);
+
         //Slow Time TODO change hardcoded value
         Time.timeScale = 0.1f;
 
@@ -267,13 +273,20 @@ public class LevelController : MonoBehaviour
 
     public void CheckForNoOrbs()
     {
-        //If there are no more orbs to shoot and none on the map
-        if(orbsUsed >= passScore && ActiveOrbs == 0)
+        if(ActiveOrbs == 0)
         {
-            //End the game
-            AdjustOrbsUsed(99);
-            ObjectsDestroyed(99);
+            GameDirector.audioController.ResetPitchLoop();
+
+            //If there are no more orbs to shoot and none on the map
+            if (orbsUsed >= passScore)
+            {
+                //End the game
+                AdjustOrbsUsed(99);
+                ObjectsDestroyed(99);
+            }
         }
+
+        
     }
 }
 

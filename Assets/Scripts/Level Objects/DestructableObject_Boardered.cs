@@ -54,7 +54,7 @@ public class DestructableObject_Boardered : MonoBehaviour
     IEnumerator FadeOutDestroy()
     {
         //Activate sound TODO replace with own sound
-        GameDirector.LevelManager.CurrentLevel.PlaySound(innerObject.DeathNoise);
+        GameDirector.audioController.PlayEffectClip(GameDirector.audioController.AudioCollection.DestructibleObjectDeath);
 
         //Set to fading, to stop double death situations
         Fading = true;
