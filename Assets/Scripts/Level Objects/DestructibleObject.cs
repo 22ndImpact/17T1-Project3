@@ -63,6 +63,24 @@ public class DestructibleObject : ColouredObject
         }
     }
 
+    void OnCollisionStay(Collision _collision)
+    {
+        //If it collides with another coloured object
+        if (_collision.gameObject.GetComponent<ColouredObject>() != null)
+        {
+            //If they are the same colour
+            if (_collision.gameObject.GetComponent<ColouredObject>().objectColour == objectColour)
+            {
+                //Trigger the object fade
+                if (!Fading)
+                {
+                    //Activte the fade
+                    StartCoroutine(FadeOutDestroy());
+                }
+            }
+        }
+    }
+
     IEnumerator FadeOutDestroy()
     {
         //Activate sound

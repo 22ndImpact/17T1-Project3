@@ -44,11 +44,11 @@ public class Button_SelectLevel : MonoBehaviour
         }
 
         //Changes colour to passed or perfect if needed
-        if (GameDirector.LevelManager.GetLevelData(LevelID).BestScore < GameDirector.LevelManager.GetLevelData(LevelID).PerfectScore)
+        if (GameDirector.LevelManager.GetLevelData(LevelID).BestScore <= GameDirector.LevelManager.GetLevelData(LevelID).PerfectScore)
         {
             image.color = ColourPerfect;
         }
-        else if (GameDirector.LevelManager.GetLevelData(LevelID).BestScore < GameDirector.LevelManager.GetLevelData(LevelID).PassScore)
+        else if (GameDirector.LevelManager.GetLevelData(LevelID).BestScore <= GameDirector.LevelManager.GetLevelData(LevelID).PassScore)
         {
             image.color = ColourPassed;
         }

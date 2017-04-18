@@ -39,13 +39,7 @@ public class AudioController : MonoBehaviour
     public void PlayEffectPitchLoop(AudioClip _AudioClip)
     {
         //Adjust the pitch
-        Effect_PitchLoop_Source.pitch += PitchIncrement;
-
-        //Loop the pitch if nessessary
-        if (Effect_PitchLoop_Source.pitch > PitchMax)
-        {
-            Effect_PitchLoop_Source.pitch = PitchMin;
-        }
+        Effect_PitchLoop_Source.pitch = Mathf.Clamp(Effect_PitchLoop_Source.pitch + PitchIncrement, PitchMin, PitchMax);
         
         //Play clip
         Effect_PitchLoop_Source.PlayOneShot(_AudioClip);

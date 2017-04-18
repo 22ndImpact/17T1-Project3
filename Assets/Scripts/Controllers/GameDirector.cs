@@ -6,6 +6,7 @@ using System;
 
 public static class GameDirector
 {
+
     #region Object References
     public static MenuController menuController;
     #endregion
@@ -62,6 +63,7 @@ public class GD_LevelManager
     #region Tracking Variables
     public int CurrentLevelID;
     public bool LevelListPopulated = false;
+    public static string VersionID;
     #endregion
 
     #region Object References
@@ -87,7 +89,7 @@ public class GD_LevelManager
     /// </summary>
     public void PopulateLevelList()
     {
-        //If saved data is found
+        //If saved data is found and theversion number is correct
         if (GameDirector.dataManager.SaveDataFound)
         {
             //Load from that
