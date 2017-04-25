@@ -27,7 +27,7 @@ public class Button_LevelCompleteContinue : MonoBehaviour
         }
         else if (GameDirector.LevelManager.GetLevelData(GameDirector.LevelManager.CurrentLevelID + 1).Unlocked == false)
         {
-            GetComponent<Button>().enabled = false;
+            GetComponent<Button>().enabled = true;
             text.text = LockedText;
         }
         else
@@ -55,10 +55,19 @@ public class Button_LevelCompleteContinue : MonoBehaviour
             }
         }
         //If you are not on the last level
-        else
+        else if(GameDirector.LevelManager.GetLevelData(GameDirector.LevelManager.CurrentLevelID + 1).Unlocked == true)
         {
             GameDirector.LevelManager.UnloadLevel(GameDirector.LevelManager.CurrentLevelID);
             GameDirector.LevelManager.LoadLevel(GameDirector.LevelManager.CurrentLevelID + 1);
+
+            //Transition the new level In
+            GameDirector.LevelManager.levelUIController.StartLevelOpeningTransition();
+        }
+        //If you havent unlocked the next level
+        else if (GameDirector.LevelManager.GetLevelData(GameDirector.LevelManager.CurrentLevelID + 1).Unlocked == false)
+        {
+            GameDirector.LevelManager.UnloadLevel(GameDirector.LevelManager.CurrentLevelID);
+            GameDirector.LevelManager.LoadLevel(GameDirector.LevelManager.CurrentLevelID);
 
             //Transition the new level In
             GameDirector.LevelManager.levelUIController.StartLevelOpeningTransition();
