@@ -37,6 +37,8 @@ public class GravityWell : MonoBehaviour
             //Determining gravity force on rigid body
             float gravityDistance = Mathf.Clamp((gameObject.transform.position - RB.gameObject.transform.position).magnitude, 0, Mathf.Infinity);
 
+            
+
             if(gravityDistance < gravityRange)
             {
                 //Determine direction

@@ -14,6 +14,7 @@ public class LevelData
 {
     public string LevelName;
     public int LevelID;
+    public int LevelWorld;
     public int PassScore;
     public int PerfectScore;
     public int BestScore;

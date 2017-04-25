@@ -8,7 +8,7 @@ public class Button_SelectLevel : MonoBehaviour
     #region Tracking variables
     //The ID of the level that this 
     public int LevelID;
-    public string UnloackedText;
+    public string UnlockedText;
     public string LockedText;
     #endregion
 
@@ -39,7 +39,7 @@ public class Button_SelectLevel : MonoBehaviour
         else
         {
             GetComponent<Button>().enabled = true;
-            text.text = UnloackedText;
+            text.text = UnlockedText;
             image.color = ColourUnlocked;
         }
 
