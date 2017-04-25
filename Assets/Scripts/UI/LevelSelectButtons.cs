@@ -5,6 +5,7 @@ using UnityEngine;
 public class LevelSelectButtons : MonoBehaviour
 {
     public GameObject levelSelectButtonPrefab;
+    public int World;
 
 	void Start ()
     {
@@ -15,13 +16,17 @@ public class LevelSelectButtons : MonoBehaviour
     {
         for (int i = 0; i < GameDirector.LevelManager.LevelDataList.Count; i++)
         {
-            GameObject newButton = GameObject.Instantiate(levelSelectButtonPrefab);
-            //Set the properties of the button
-            newButton.GetComponent<Button_SelectLevel>().LevelID = GameDirector.LevelManager.LevelDataList[i].LevelID;
-            newButton.GetComponent<Button_SelectLevel>().UnlockedText = GameDirector.LevelManager.LevelDataList[i].LevelID.ToString();
-            newButton.GetComponent<Button_SelectLevel>().LockedText = GameDirector.LevelManager.LevelDataList[i].LevelID.ToString();
-            //Set the position of the buttons
-            newButton.transform.SetParent(this.transform, false);
+            if(GameDirector.LevelManager.LevelDataList[i].LevelWorld == World)
+            {
+                GameObject newButton = GameObject.Instantiate(levelSelectButtonPrefab);
+                //Set the properties of the button
+                newButton.GetComponent<Button_SelectLevel>().LevelID = GameDirector.LevelManager.LevelDataList[i].LevelID;
+                newButton.GetComponent<Button_SelectLevel>().World = GameDirector.LevelManager.LevelDataList[i].LevelWorld;
+                newButton.GetComponent<Button_SelectLevel>().UnlockedText = GameDirector.LevelManager.LevelDataList[i].LevelID.ToString();
+                newButton.GetComponent<Button_SelectLevel>().LockedText = GameDirector.LevelManager.LevelDataList[i].LevelID.ToString();
+                //Set the position of the buttons
+                newButton.transform.SetParent(this.transform, false);
+            }
         }
 
 

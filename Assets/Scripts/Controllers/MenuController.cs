@@ -38,27 +38,39 @@ public class MenuController : MonoBehaviour
         }
         
     }
-    public void ActivateLevelSelect()
+    public void ActivateLevelSelect(int _World)
     {
         if(!TransitioningMenu)
+        {
+                    //Refreshes the level info on the buttons
+                    GameDirector.LevelManager.UpdateLevelButtonInfo();
+                    //change to switch statment if positions change
+                    StartCoroutine(TransitionMenu(MenuPanel.localPosition, new Vector3(-1450 * _World, 0, 0)));
+        }
+    }
+    public void ActivateLevelSelectFromGame(int _World)
+    {
+        if (!TransitioningMenu)
         {
             //Refreshes the level info on the buttons
             GameDirector.LevelManager.UpdateLevelButtonInfo();
-            
-            StartCoroutine(TransitionMenu(MenuPanel.localPosition, new Vector3(-1450, 0, 0)));
+            //change to switch statment if positions change
+            StartCoroutine(TransitionMenu(new Vector3(-1450 * _World, MenuPanel.localPosition.y, MenuPanel.localPosition.z), new Vector3(-1450 * _World, 0, 0)));
         }
     }
-    public void ActivateGamePlay()
+
+    public void ActivateGamePlay(int _World)
     {
         if(!TransitioningMenu)
         {
-            StartCoroutine(TransitionMenu(MenuPanel.localPosition, new Vector3(-1450, 2560, 0)));
+            StartCoroutine(TransitionMenu(MenuPanel.localPosition, new Vector3(-1450 * _World, 2560, 0)));
         }
     }
+
     IEnumerator TransitionMenu(Vector3 _startingPosition, Vector3 _targetPosition)
     {
         TransitioningMenu = true;
-        MenuPanel.localPosition = _targetPosition;
+        //MenuPanel.localPosition = _targetPosition;
 
         float MenuTransitionTimer = MenuTransitionTime;
 

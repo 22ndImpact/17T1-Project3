@@ -10,6 +10,7 @@ public class LevelController : MonoBehaviour
     public float reloadTime;
     public string LevelName;
     public int LevelID;
+    public int LevelWorld;
     public int passScore;
     public int perfectScore;
     public int bestScore;
@@ -48,6 +49,8 @@ public class LevelController : MonoBehaviour
         #region External Object Initialization
         //Sets the current level based on scene name
         GameDirector.LevelManager.CurrentLevelID = GameDirector.LevelManager.GetLevelIDFromScene(GameDirector.SceneManager.CurrentLevelSceneName);
+        //Sets the current world (between levels)
+        GameDirector.LevelManager.CurrentWorld = LevelWorld;
         //Attempts to populate the level list
         GameDirector.LevelManager.PopulateLevelList();
         //Updates the level manager that this level is the current one
@@ -158,6 +161,7 @@ public class LevelController : MonoBehaviour
 
         LevelName = levelData.LevelName;
         LevelID = levelData.LevelID;
+        LevelWorld = levelData.LevelWorld;
         passScore = levelData.PassScore;
         perfectScore = levelData.PerfectScore;
         bestScore = levelData.BestScore;

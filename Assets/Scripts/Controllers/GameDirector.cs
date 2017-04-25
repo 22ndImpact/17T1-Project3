@@ -64,6 +64,7 @@ public class GD_LevelManager
     public int CurrentLevelID;
     public bool LevelListPopulated = false;
     public static string VersionID;
+    public int CurrentWorld;
     #endregion
 
     #region Object References

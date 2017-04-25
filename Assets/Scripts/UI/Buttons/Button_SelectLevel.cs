@@ -8,6 +8,7 @@ public class Button_SelectLevel : MonoBehaviour
     #region Tracking variables
     //The ID of the level that this 
     public int LevelID;
+    public int World;
     public string UnlockedText;
     public string LockedText;
     #endregion
@@ -60,7 +61,7 @@ public class Button_SelectLevel : MonoBehaviour
     public void LoadLevel()
     {
         //Moves the menus away from the Camera
-        GameDirector.menuController.ActivateGamePlay();
+        GameDirector.menuController.ActivateGamePlay(World);
 
         //Removes the currently loaded level
         if(GameDirector.LevelManager.CurrentLevel != null)
