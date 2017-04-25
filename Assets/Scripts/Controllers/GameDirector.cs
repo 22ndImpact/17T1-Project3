@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using System;
+using UnityEngine.UI;
 
 public static class GameDirector
 {
@@ -69,6 +70,7 @@ public class GD_LevelManager
 
     #region Object References
     public List<Button_SelectLevel> LevelSelectButtons = new List<Button_SelectLevel>();
+    public List<Button_WorldChange> WorldChangeButtons = new List<Button_WorldChange>();
     public LevelController CurrentLevel;
     public LevelUIController levelUIController;
     //List of persistant level data that is used by the level selector and updated by indervidual level controllers
@@ -112,6 +114,28 @@ public class GD_LevelManager
         foreach (Button_SelectLevel levelSelectButton in LevelSelectButtons)
         {
             levelSelectButton.RefreshLevelButtonInfo();
+        }
+
+        //Debug.Log("updating world buttons");
+        //Loop through world charge buttons
+        foreach (Button_WorldChange worldChangeButton in WorldChangeButtons)
+        {
+            //Debug.Log("Updating World button: " + worldChangeButton.World);
+            //Loop through each level select button
+            foreach (Button_SelectLevel levelSelectButton in LevelSelectButtons)
+            {
+                //if the level select button and the world chage button have the same world, and the level is unlocked, unlock the world
+                if(worldChangeButton.World == levelSelectButton.World && levelSelectButton.gameObject.GetComponent<Button>().enabled == true)
+                {
+                    
+                    worldChangeButton.gameObject.GetComponent<Button>().interactable = true;
+                    break;
+                }
+                else
+                {
+                    worldChangeButton.gameObject.GetComponent<Button>().interactable = false;
+                }
+            }
         }
     }
     /// <summary>
