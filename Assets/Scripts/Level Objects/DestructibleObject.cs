@@ -7,6 +7,7 @@ public class DestructibleObject : ColouredObject
     #region Tweaking Variables
     public float FadeTime;
     public float yPositionBoundary;
+    public bool isNull;
     #endregion
 
     #region Tracking Variables
@@ -90,7 +91,11 @@ public class DestructibleObject : ColouredObject
         Fading = true;
 
         //Set the object to be destroyed TODO make this an event system
-        GameDirector.LevelManager.CurrentLevel.ObjectsDestroyed(1);
+        if(!isNull)
+        {
+            GameDirector.LevelManager.CurrentLevel.ObjectsDestroyed(1);
+        }
+
 
         //Stores the initial alpha of the object to lerp from
         float startignAlpha = GetComponent<MeshRenderer>().material.color.a;

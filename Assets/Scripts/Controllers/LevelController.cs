@@ -172,6 +172,8 @@ public class LevelController : MonoBehaviour
         GameObject newOrb = Instantiate<GameObject>(PrefabList.PlayerOrb);
         //Initializes the orb and feeds through level information
         newOrb.GetComponent<PlayerOrb>().Initialize(this, Anchor);
+        //Sets the anchors object to this orb
+        //Anchor.GetComponent<Anchor>().CurrentOrb = newOrb;
     }
 
     /// <summary>

@@ -12,6 +12,10 @@ public class Anchor : MonoBehaviour {
     public float FadeTime;
     #endregion
 
+    #region Object References
+    public GameObject CurrentOrb;
+    #endregion
+
     void Start()
     {
         //Stores the initial alpha of the object to lerp from
@@ -21,6 +25,13 @@ public class Anchor : MonoBehaviour {
     void Update()
     {
         ForceDisable();
+
+        //Tracks the position of the orb
+        if(CurrentOrb != null)
+        {
+            transform.LookAt(CurrentOrb.transform.position, Vector3.forward);
+        }
+        
     }
 
     /// <summary>
@@ -63,5 +74,8 @@ public class Anchor : MonoBehaviour {
 
             yield return null;
         }
+
+        //Removes the attachment of the orb to the anchor
+        CurrentOrb = null;
     }
 }

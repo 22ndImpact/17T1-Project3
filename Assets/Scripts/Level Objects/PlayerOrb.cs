@@ -27,6 +27,8 @@ public class PlayerOrb : ColouredObject
     [SerializeField] private float dragLimit;
     //The y position that the orb destorys itself when goes below
     public float yPositionBoundary;
+    //The amoutn of fade time there is if the orb dies
+    public float FadeTime;
     #endregion
 
     #region Object References
@@ -300,6 +302,53 @@ public class PlayerOrb : ColouredObject
             Destroy(this.gameObject, 5);
 
         }
+    }
+
+    public IEnumerator FadeOutDestroy()
+    {
+        //Take away an active orb
+        GameDirector.LevelManager.CurrentLevel.ActiveOrbs -= 1;
+
+        //Activate sound
+        GameDirector.audioController.PlayEffectClip(GameDirector.audioController.AudioCollection.DestructibleObjectDeath);
+
+        //Turns off the collider
+        SC.enabled = false;
+
+        //Stores the initial alpha of the object to lerp from
+        float startignAlpha = GetComponent<MeshRenderer>().material.color.a;
+        //Start a timer
+        float timeTracker = FadeTime;
+
+        //Setting the gradient base of the trail
+        Gradient BaseGradient = Trail.colorGradient;
+
+        while (timeTracker > 0)
+        {
+            //Store a temp colour to allow us to modify only the alpha
+            Color tempColor = GetComponent<MeshRenderer>().material.color;
+            //Lerp the alpha of the temp colour in time with the percentage of fade
+            tempColor.a = Mathf.Lerp(0, startignAlpha, timeTracker / FadeTime);
+            //Apply the temp colour back to the real material
+            GetComponent<MeshRenderer>().material.color = tempColor;
+
+            //Increase the completion by delta time
+            timeTracker -= Time.smoothDeltaTime;
+
+            #region Fade out trail
+            //Create a placeholder gradient
+            Gradient newGradient = new Gradient();
+            //Alter alpha on gradient
+            newGradient.SetKeys(Trail.colorGradient.colorKeys, new GradientAlphaKey[] {
+            new GradientAlphaKey(Mathf.Lerp(0, BaseGradient.alphaKeys[0].alpha, timeTracker / FadeTime), 0.0f),
+            new GradientAlphaKey(Mathf.Lerp(0, BaseGradient.alphaKeys[1].alpha, timeTracker / FadeTime), 1.0f) });
+            //Apply new gradient
+            Trail.colorGradient = newGradient;
+            #endregion
+
+            yield return null;
+        }
+        Destroy(this.gameObject);
     }
 }
 

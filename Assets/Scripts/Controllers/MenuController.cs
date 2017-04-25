@@ -45,14 +45,14 @@ public class MenuController : MonoBehaviour
             //Refreshes the level info on the buttons
             GameDirector.LevelManager.UpdateLevelButtonInfo();
             
-            StartCoroutine(TransitionMenu(MenuPanel.localPosition, new Vector3(-1440, 0, 0)));
+            StartCoroutine(TransitionMenu(MenuPanel.localPosition, new Vector3(-1450, 0, 0)));
         }
     }
     public void ActivateGamePlay()
     {
         if(!TransitioningMenu)
         {
-            StartCoroutine(TransitionMenu(MenuPanel.localPosition, new Vector3(-1440, 2560, 0)));
+            StartCoroutine(TransitionMenu(MenuPanel.localPosition, new Vector3(-1450, 2560, 0)));
         }
     }
     IEnumerator TransitionMenu(Vector3 _startingPosition, Vector3 _targetPosition)
