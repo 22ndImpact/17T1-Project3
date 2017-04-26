@@ -50,7 +50,7 @@ public class LevelController : MonoBehaviour
         //Sets the current level based on scene name
         GameDirector.LevelManager.CurrentLevelID = GameDirector.LevelManager.GetLevelIDFromScene(GameDirector.SceneManager.CurrentLevelSceneName);
         //Sets the current world (between levels)
-        GameDirector.LevelManager.CurrentWorld = LevelWorld;
+        GameDirector.LevelManager.ChangeWorld(LevelWorld);
         //Attempts to populate the level list
         GameDirector.LevelManager.PopulateLevelList();
         //Updates the level manager that this level is the current one

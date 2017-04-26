@@ -46,7 +46,7 @@ public class Button_LevelCompleteContinue : MonoBehaviour
         if (GameDirector.LevelManager.CurrentLevelID == GameDirector.LevelManager.LevelDataList.Count)
         {
             //Activate the level select
-            GameDirector.menuController.ActivateLevelSelect(GameDirector.LevelManager.CurrentWorld);
+            GameDirector.menuController.ActivateLevelSelect();
 
             //Trigger the transition if the end game menu is fully up
             if (GameDirector.LevelManager.levelUIController.MenuUp)

@@ -6,8 +6,12 @@ public class Button_InGameLevelSelect : MonoBehaviour
 {
     public void ReturnToLevelSelect()
     {
-        //Activate the level select and go to the current world selecetd
-        GameDirector.menuController.ActivateLevelSelectFromGame(GameDirector.LevelManager.CurrentWorld);
+        //If you are not transitioning the level and if you are not in slow mo
+        if(!GameDirector.LevelManager.levelUIController.TransitioningIn && !GameDirector.LevelManager.levelUIController.TransitioningOut && Time.timeScale == 1)
+        {
+            GameDirector.menuController.ActivateLevelSelect();
+        }
+        
 
         //Trigger the transition if the end game menu is fully up
         if (GameDirector.LevelManager.levelUIController.MenuUp)

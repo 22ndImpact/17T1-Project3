@@ -61,7 +61,7 @@ public class Button_SelectLevel : MonoBehaviour
     public void LoadLevel()
     {
         //Moves the menus away from the Camera
-        GameDirector.menuController.ActivateGamePlay(World);
+        GameDirector.menuController.ActivateGamePlay();
 
         //Removes the currently loaded level
         if(GameDirector.LevelManager.CurrentLevel != null)

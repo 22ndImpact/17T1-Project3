@@ -5,18 +5,22 @@ using UnityEngine;
 public class LevelSelectButtons : MonoBehaviour
 {
     public GameObject levelSelectButtonPrefab;
-    public int World;
+
+    void Awake()
+    {
+        //InitializeLevelSelectButtons();
+    }
 
 	void Start ()
     {
-        InitializeLevelSelectButtons();
+        
 	}
 
-    public void InitializeLevelSelectButtons()
+    public void InitializeLevelSelectButtons(int _World)
     {
         for (int i = 0; i < GameDirector.LevelManager.LevelDataList.Count; i++)
         {
-            if(GameDirector.LevelManager.LevelDataList[i].LevelWorld == World)
+            if(GameDirector.LevelManager.LevelDataList[i].LevelWorld == _World)
             {
                 GameObject newButton = GameObject.Instantiate(levelSelectButtonPrefab);
                 //Set the properties of the button
@@ -29,6 +33,7 @@ public class LevelSelectButtons : MonoBehaviour
             }
         }
 
+        
 
         //Scans for all the buttons and adds them to the gameDirectors list
         for (int i = 0; i < transform.childCount; i++)
