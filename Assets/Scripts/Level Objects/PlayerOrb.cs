@@ -156,7 +156,7 @@ public class PlayerOrb : ColouredObject
                 Anchor.GetComponent<Anchor>().TurnOff();
                 break;
             case OrbState.Active:
-                RB.useGravity = true;
+                //TEMP//RB.useGravity = true;
                 SC.enabled = true;
                 Trail.enabled = true;
                 TrajPred.DestroyTrajectory();
@@ -460,7 +460,10 @@ public class TrajectoryPredictor
         for (int i = 0; i < TrajectoryNodeList.Count; i++)
         {
             float dx = velocity * fTime * Mathf.Cos(angle * Mathf.Deg2Rad);
-            float dy = velocity * fTime * Mathf.Sin(angle * Mathf.Deg2Rad) - (Physics.gravity.magnitude * fTime * fTime / 2.0f);
+            //Use for gravity prediction
+            //float dy = velocity * fTime * Mathf.Sin(angle * Mathf.Deg2Rad) - (Physics.gravity.magnitude * fTime * fTime / 2.0f);
+            //Use for no gravity prediction
+            float dy = velocity * fTime * Mathf.Sin(angle * Mathf.Deg2Rad);
 
             Vector3 pos = new Vector3(pStartPosition.x + dx, pStartPosition.y + dy, 0);
             TrajectoryNodeList[i].transform.position = pos;
@@ -481,7 +484,7 @@ public class TrajectoryPredictor
         #endregion
 
         #region Adjust Line Renderer
-        LR.numPositions = GetTrajectoryLocations().Length;
+        LR.positionCount = GetTrajectoryLocations().Length;
 
         Vector3[] points = GetTrajectoryLocations();
         for (int j = 0; j < points.Length; j++)
